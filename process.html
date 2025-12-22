@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Selected Data Viewer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+              /* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for the entire page */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 6px;
+  border: 3px solid var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-color);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--bg-color);
+}
+
+/* Smooth scrolling for all containers with overflow */
+.container, .exam-info-container, .table-container {
+  scroll-behavior: smooth;
+}
+
+/* Header shadow on scroll */
+header {
+  transition: box-shadow 0.3s ease;
+}
+
+header.scrolled {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+       /* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for the entire page */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 6px;
+  border: 3px solid var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-color);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--bg-color);
+}
+
+/* Smooth scrolling for all containers with overflow */
+.container, .exam-info-container, .table-container {
+  scroll-behavior: smooth;
+}
+
+/* Header shadow on scroll */
+header {
+  transition: box-shadow 0.3s ease;
+}
+
+header.scrolled {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+    /* Your existing CSS styles remain the same */
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --accent: #4895ef;
+      --light: #f8f9fa;
+      --dark: #1a1a2e;
+      --gray: #6c757d;
+      --success: #4cc9f0;
+      --danger: #f72585;
+      --warning: #f8961e;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --bg-color: #f5f7fb;
+      --text-color: #1a1a2e;
+      --header-bg: linear-gradient(135deg, var(--primary), var(--accent));
+      --card-bg: white;
+      --sidebar-bg: white;
+      --footer-bg: white;
+      --container-bg: white;
+      --table-header-bg: var(--primary);
+      --table-row-even: #f9f9f9;
+      --table-row-hover: #f1f1f1;
+      --highlight-color: #fffacd;
+    }
+
+    .dark-mode {
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
+      --header-bg: linear-gradient(135deg, #1a1a2e, #16213e);
+      --card-bg: #1e1e1e;
+      --sidebar-bg: #1e1e1e;
+      --footer-bg: #1e1e1e;
+      --container-bg: #1e1e1e;
+      --table-header-bg: #2a2a2a;
+      --table-row-even: #252525;
+      --table-row-hover: #2e2e2e;
+      --highlight-color: #3a3a00;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      padding: 20px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .header-info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .header-info-item i {
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .header-info {
+        display: none;
+      }
+    }
+
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .header-title i {
+      font-size: 1.2rem;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .toggle-icon {
+      font-size: 1rem;
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .exam-info-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .exam-info-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 200px;
+      flex: 1 1 200px;
+    }
+
+    .exam-info-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .exam-info-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .exam-info-label {
+      font-size: 13px;
+      color: var(--gray);
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .exam-info-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .file-info-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 200px;
+      flex: 1 1 200px;
+    }
+
+    .file-info-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: #f72585;
+    }
+
+    .file-info-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-info-label {
+      font-size: 13px;
+      color: var(--gray);
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .file-info-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-color);
+      word-break: break-all;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(0,0,0,0.1);
+      margin: 20px 0;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #tableContainer {
+      margin: 30px 0;
+      overflow-x: auto;
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
+      max-height: calc(100vh - 250px);
+      position: relative;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      table-layout: auto;
+    }
+
+    th {
+      background: var(--table-header-bg);
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    tr:nth-child(even) {
+      background: var(--table-row-even);
+    }
+
+    tr:hover {
+      background: var(--table-row-hover);
+    }
+
+    .highlight {
+      background: var(--highlight-color) !important;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-top: 20px;
+      transition: var(--transition);
+    }
+
+    .back-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 30px;
+      color: var(--gray);
+    }
+
+    .loading i {
+      animation: spin 1s linear infinite;
+    }
+
+    th.checkbox-column, td.checkbox-column {
+      width: 40px;
+      text-align: center;
+    }
+    
+    .proceed-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      margin: 15px 0;
+      display: none;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      border-radius: 8px;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      color: white;
+      background-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .toast-success {
+      background-color: #4BB543;
+    }
+
+    .toast-error {
+      background-color: var(--danger);
+    }
+
+    .toast-warning {
+      background-color: var(--warning);
+    }
+
+    .fade-out {
+      animation: fadeOut 0.5s ease-out forwards;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .exam-info-container {
+        gap: 15px;
+        padding: 15px;
+      }
+      
+      .exam-info-item {
+        min-width: 160px;
+        flex: 1 1 160px;
+      }
+      
+      th, td {
+        padding: 10px 12px;
+      }
+    }
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+
+    .action-btn {
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .edit-btn {
+      background-color: var(--warning);
+      color: white;
+    }
+
+    .edit-btn:hover {
+      background-color: #e07e00;
+    }
+
+    .save-btn {
+      background-color: var(--success);
+      color: white;
+      display: none;
+    }
+
+    .save-btn:hover {
+      background-color: #00a8d4;
+    }
+
+    .delete-btn {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background-color: #e01171;
+    }
+
+    .editable {
+      background-color: var(--highlight-color);
+      outline: 1px solid var(--warning);
+    }
+
+    .editable-input {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: white;
+      color: var(--dark);
+    }
+    .action-buttons-container {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  font-size: 14px;
+}
+
+.action-button.primary {
+  background: var(--primary);
+  color: white;
+}
+
+.action-button.primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-button.secondary {
+  background: var(--success);
+  color: white;
+}
+
+.action-button.secondary:hover {
+  background: #00a8d4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+    @media (max-width: 480px) {
+      .exam-info-container {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .exam-info-item {
+        width: 100%;
+      }
+      
+      header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .header-title {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .theme-toggle {
+        margin-top: 0.5rem;
+      }
+      
+      .proceed-container {
+        justify-content: center;
+      }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+   .search-container {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 12px;
+      color: var(--gray);
+      z-index: 1;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 40px 10px 40px; /* Extra right padding for clear button */
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 14px;
+      transition: var(--transition);
+      box-shadow: var(--card-shadow);
+    }
+    .clear-btn {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--gray);
+      cursor: pointer;
+      padding: 5px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.8);
+      z-index: 2;
+    }
+
+    .clear-btn.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    .clear-btn:hover {
+      background-color: rgba(0,0,0,0.1);
+      color: var(--danger);
+    }
+
+    .clear-btn i {
+      font-size: 12px;
+      transition: var(--transition);
+    }
+
+    .search-highlight {
+      background-color: var(--highlight-color);
+      font-weight: 600;
+      padding: 2px;
+      border-radius: 3px;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 20px;
+      color: var(--danger);
+      font-weight: 500;
+      display: none;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .header-info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .header-info-item i {
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .header-info {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+   <header>
+    <div class="header-title">
+      <h1 id="tableTitle">Selected Data Viewer</h1>
+    </div>
+    <div class="header-info" id="headerInfo">
+      <!-- Exam file and table info will be populated here -->
+    </div>
+    <div class="theme-toggle" id="themeToggle">
+      <i class="fas fa-moon toggle-icon"></i>
+      <label class="toggle-switch">
+        <input type="checkbox" id="darkModeToggle">
+        <span class="slider"></span>
+      </label>
+      <i class="fas fa-sun toggle-icon"></i>
+    </div>
+  </header>
+  <div class="search-container">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="tableSearch" placeholder="Search in table...">
+      <button id="clearSearch" class="clear-btn" title="Clear search">
+        <i class="fas fa-times"></i> 
+      </button>
+    </div>
+  </div>
+  <div class="container">
+    <div id="selectionInfo" class="exam-info-container">
+      <!-- Selection information will be populated here -->
+    </div>
+    <div class="action-buttons-container">
+      <button class="btn btn-primary" id="addFromDbBtn" onclick="openDatabaseWindow()">
+        <i class="fas fa-database"></i> Select From Database
+      </button>
+      <button class="action-button secondary" onclick="createAllotmentTable()">
+        <i class="fas fa-table"></i> Create Allotment Table
+      </button>
+    </div>
+    <div id="tableContainer">
+      <div class="loading">
+        <i class="fas fa-spinner"></i>
+        <span>Loading selected data...</span>
+      </div>
+    </div>
+    <!-- Exam file data will be displayed here -->
+    <a href="index.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Table Selection
+    </a>
+  </div>
+
+  <script>
+    // Apply theme based on user preference
+    function applyTheme() {
+      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      let currentTheme = localStorage.getItem('theme');
+      
+      // Use system preference if no theme is set
+      if (!currentTheme) {
+        currentTheme = prefersDarkScheme.matches ? 'dark' : 'light';
+        localStorage.setItem('theme', currentTheme);
+      }
+      
+      // Apply the stored theme
+      if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeToggle').checked = true;
+      }
+    }
+
+    // Helper function to escape HTML
+    function escapeHtml(unsafe) {
+      return unsafe
+        .toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Format table headers
+    function formatHeader(header) {
+      return header.replace(/[_]+/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).trim();
+    }
+
+    // Toast notification function
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 500);
+      }, 3000);
+    }
+
+    // Generate a unique ID for each row
+    function generateRowId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    // Load selected data from sessionStorage
+    function loadSelectedData() {
+      try {
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const tableName = urlParams.get('table');
+        const storageKey = urlParams.get('key');
+        const examFileFromUrl = urlParams.get('examfile'); // Get examfile from URL
+        
+        let selectionData;
+        
+        // Try to get data from sessionStorage first
+        if (tableName && !storageKey) {
+          const storedData = sessionStorage.getItem('selectedRows');
+          if (storedData) {
+            selectionData = JSON.parse(storedData);
+            // If examfile is in URL, override the one in sessionStorage
+            if (examFileFromUrl) {
+              selectionData.examfile = examFileFromUrl;
+            }
+          }
+        } 
+        // Try to get data from IndexedDB if key is provided
+        else if (storageKey) {
+          // This would require your IndexedDB implementation
+          // For now, we'll show an error
+          throw new Error('IndexedDB storage not implemented in this example');
+        }
+        
+        if (!selectionData) {
+          throw new Error('No selection data found. Please go back and select rows first.');
+        }
+        
+        // If we have examfile from URL but not in selectionData, add it
+        if (examFileFromUrl && !selectionData.examfile) {
+          selectionData.examfile = examFileFromUrl;
+        }
+        
+        // Set title
+        document.getElementById('tableTitle').textContent = `📊 Selected Data from ${selectionData.table}`;
+        document.title = `📊 Selected Data from ${selectionData.table} | Data Viewer`;
+
+        // Display header info
+        displayHeaderInfo(selectionData);
+        
+        // Display selection info
+        displaySelectionInfo(selectionData);
+        
+        // Display the table
+        displaySelectedTable(selectionData);
+        
+        // Display exam file data if available
+        if (selectionData.examfile) {
+          displayExamFileData(selectionData.examfile);
+        }
+        
+        // Set up search functionality
+        setupSearch();
+        
+      } catch (err) {
+        console.error(err);
+        document.getElementById('tableContainer').innerHTML = `
+          <div class="loading" style="color: var(--danger)">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>${err.message}</span>
+          </div>`;
+      }
+    }
+
+    // Display exam file data from examUploadDb
+    async function displayExamFileData(examFileName) {
+      try {
+        // Sanitize the table name
+        const sanitizedTableName = examFileName.replace(/[^a-zA-Z0-9_]/g, '_');
+        
+        // Fetch data from the exam table using Electron API
+        const examData = await window.electronAPI.getExamUploadTableData(sanitizedTableName);
+        
+        if (!examData || examData.length === 0) {
+          console.log(`No data found in exam table: ${sanitizedTableName}`);
+          return;
+        }
+        
+        // Create a container for the exam data
+        const examContainer = document.createElement('div');
+        examContainer.id = 'examDataContainer';
+        examContainer.style.marginTop = '30px';
+        
+        // Add title for exam data
+        const examTitle = document.createElement('div');
+        examTitle.className = 'section-title';
+        examTitle.innerHTML = `<i class="fas fa-file-excel"></i> Exam File Data: ${examFileName}`;
+        examContainer.appendChild(examTitle);
+        
+        // Create table for exam data
+        const tableWrapper = document.createElement('div');
+        tableWrapper.style.overflowX = 'auto';
+        tableWrapper.style.borderRadius = '10px';
+        tableWrapper.style.boxShadow = 'var(--card-shadow)';
+        tableWrapper.style.maxHeight = 'calc(100vh - 250px)';
+        tableWrapper.style.position = 'relative';
+        tableWrapper.style.background = 'var(--card-bg)';
+        
+        // Get headers from the first row
+        const headers = Object.keys(examData[0]);
+        
+        let tableHTML = '<table><thead><tr>';
+        headers.forEach(h => {
+          tableHTML += `<th>${formatHeader(h)}</th>`;
+        });
+        tableHTML += '</tr></thead><tbody>';
+        
+        // Add rows with IDs
+        examData.forEach((row, index) => {
+          // Generate a unique ID for each row if not already present
+          if (!row.rowId) {
+            row.rowId = generateRowId();
+          }
+          
+          tableHTML += `<tr data-row-id="${row.rowId}">`;
+          headers.forEach(h => {
+            const cell = row[h] !== null && row[h] !== undefined ? row[h] : '-';
+            tableHTML += `<td data-column="${h}">${cell}</td>`;
+          });
+          tableHTML += '</tr>';
+        });
+        
+        tableHTML += '</tbody></table>';
+        tableWrapper.innerHTML = tableHTML;
+        
+        examContainer.appendChild(tableWrapper);
+        
+        // Insert after the main table container
+        const tableContainer = document.getElementById('tableContainer');
+        tableContainer.parentNode.insertBefore(examContainer, tableContainer.nextSibling);
+        
+        // Store exam data with row IDs in sessionStorage
+        storeExamDataInSession(examData, examFileName, headers);
+        
+      } catch (err) {
+        console.error('Error loading exam file data:', err);
+        showToast('Could not load exam file data', 'error');
+      }
+    }
+
+    // Store exam data in sessionStorage with proper structure
+    function storeExamDataInSession(examData, examFileName, headers) {
+      const examTableData = {
+        tableName: examFileName,
+        headers: headers,
+        rows: examData,
+        timestamp: new Date().toISOString(),
+        rowCount: examData.length
+      };
+      
+      // Store in sessionStorage with a unique key
+      sessionStorage.setItem('examTableData', JSON.stringify(examTableData));
+    }
+
+    // Display header information
+    function displayHeaderInfo(selectionData) {
+      const headerInfo = document.getElementById('headerInfo');
+      
+      // Get exam file name from selection data
+      const examFile = selectionData.examfile || 'No exam file specified';
+      
+      headerInfo.innerHTML = `
+        <div class="header-info-item">
+          <i class="fas fa-file-alt"></i>
+          <span>${examFile}</span>
+        </div>
+        <div class="header-info-item">
+          <i class="fas fa-table"></i>
+          <span>${selectionData.table}</span>
+        </div>
+        <div class="header-info-item">
+          <i class="fas fa-list"></i>
+          <span>${selectionData.selectedCount} rows selected</span>
+        </div>
+      `;
+    }
+
+    // Display selection information
+    function displaySelectionInfo(selectionData) {
+      const selectionInfo = document.getElementById('selectionInfo');
+      
+      // Get exam file name from selection data
+      const examFile = selectionData.examfile || 'No exam file specified';
+      
+      selectionInfo.innerHTML = `
+        <div class="exam-info-item">
+          <div class="exam-info-icon" style="background-color: var(--primary);">
+            <i class="fas fa-table"></i>
+          </div>
+          <div class="exam-info-text">
+            <div class="exam-info-label">Table Name</div>
+            <div class="exam-info-value">${selectionData.table}</div>
+          </div>
+        </div>
+        <div class="exam-info-item">
+          <div class="exam-info-icon" style="background-color: var(--success);">
+            <i class="fas fa-list"></i>
+          </div>
+          <div class="exam-info-text">
+            <div class="exam-info-label">Selected Rows</div>
+            <div class="exam-info-value">${selectionData.selectedCount} of ${selectionData.totalRows}</div>
+          </div>
+        </div>
+        <div class="exam-info-item">
+          <div class="exam-info-icon" style="background-color: var(--accent);">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="exam-info-text">
+            <div class="exam-info-label">Selection Time</div>
+            <div class="exam-info-value">${new Date(selectionData.timestamp).toLocaleString()}</div>
+          </div>
+        </div>
+        <div class="exam-info-item">
+          <div class="exam-info-icon" style="background-color: #f72585;">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div class="exam-info-text">
+            <div class="exam-info-label">Exam File</div>
+            <div class="exam-info-value">${examFile}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Display the selected table data
+    function displaySelectedTable(selectionData) {
+      const tableContainer = document.getElementById('tableContainer');
+      const headers = selectionData.headers;
+      const rows = selectionData.rows;
+      
+      if (!rows || rows.length === 0) {
+        tableContainer.innerHTML = '<div class="loading"><i class="fas fa-database"></i><span>No selected data found.</span></div>';
+        return;
+      }
+
+      // Create table HTML
+      let html = '<table><thead><tr>';
+      headers.forEach(h => {
+        html += `<th>${formatHeader(h)}</th>`;
+      });
+      html += '<th>Action</th>';
+      html += '</tr></thead><tbody>';
+
+      // Add rows with action buttons and row IDs
+      rows.forEach((row, index) => {
+        // Generate a unique ID for each row if not already present
+        if (!row.rowId) {
+          row.rowId = generateRowId();
+        }
+        
+        html += `<tr data-row-id="${row.rowId}">`;
+        
+        headers.forEach(h => {
+          const cell = row[h] !== null && row[h] !== undefined ? row[h] : '-';
+          html += `<td data-column="${h}" data-original="${escapeHtml(cell)}">${cell}</td>`;
+        });
+        
+        // Add action buttons (only delete button)
+        html += `
+          <td class="action-buttons">
+            <button class="action-btn delete-btn" data-row-id="${row.rowId}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </td>
+        `;
+        
+        html += '</tr>';
+      });
+
+      html += '</tbody></table>';
+      tableContainer.innerHTML = html;
+      
+      // Update the stored data with row IDs
+      selectionData.rows = rows;
+      sessionStorage.setItem('selectedRows', JSON.stringify(selectionData));
+      
+      // Set up action buttons
+      setupActionButtons(selectionData);
+    }
+
+    // Function to set up delete button handlers
+    function setupActionButtons(selectionData) {
+      // Delete button functionality
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          const rowId = this.getAttribute('data-row-id');
+          const tableName = selectionData.table;
+          
+          // Find the row index by rowId
+          const rowIndex = selectionData.rows.findIndex(row => row.rowId === rowId);
+          
+          if (rowIndex === -1) {
+            showToast('Row not found', 'error');
+            return;
+          }
+          
+          const rowData = selectionData.rows[rowIndex];
+          
+          if (confirm('Are you sure you want to delete this row?')) {
+            // Show loading state on button
+            const originalText = this.innerHTML;
+            this.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Deleting...`;
+            this.disabled = true;
+
+            try {
+              // Call IPC to delete row from database
+              const result = await window.electronAPI.deleteUploadRow({
+                tableName,
+                rowData
+              });
+              
+              if (result.success) {
+                showToast(result.message || 'Row deleted successfully!', 'success');
+                
+                // Remove row from DOM
+                this.closest('tr').remove();
+                
+                // Update the stored data
+                selectionData.rows.splice(rowIndex, 1);
+                selectionData.selectedCount--;
+                
+                // Update selection info
+                document.querySelector('.exam-info-value:nth-child(2)').textContent = 
+                  `${selectionData.selectedCount} of ${selectionData.totalRows}`;
+                  
+                // Update header info
+                const headerInfoItems = document.querySelectorAll('.header-info-item');
+                if (headerInfoItems.length >= 3) {
+                  headerInfoItems[2].querySelector('span').textContent = `${selectionData.selectedCount} rows selected`;
+                }
+                
+                // Update session storage
+                sessionStorage.setItem('selectedRows', JSON.stringify(selectionData));
+                
+                // Reinitialize search to fix any issues
+                setupSearch();
+              } else {
+                throw new Error(result.error || 'Delete failed');
+              }
+            } catch (err) {
+              console.error('Delete error:', err);
+              showToast(err.message || 'Error deleting row', 'error');
+            } finally {
+              // Restore button state if still exists (row might have been removed)
+              if (document.body.contains(this)) {
+                this.innerHTML = originalText;
+                this.disabled = false;
+              }
+            }
+          }
+        });
+      });
+    }
+
+    // Create allotment table by combining both tables data
+    function createAllotmentTable() {
+      try {
+        // Get selected data from sessionStorage
+        const selectedData = JSON.parse(sessionStorage.getItem('selectedRows'));
+        if (!selectedData) {
+          showToast('No selected data found', 'error');
+          return;
+        }
+        
+        // Get exam data from sessionStorage
+        const examData = JSON.parse(sessionStorage.getItem('examTableData'));
+        if (!examData) {
+          showToast('No exam data found', 'error');
+          return;
+        }
+        
+        // Create a combined data structure
+        const allotmentData = {
+          selectedTable: selectedData,
+          examTable: examData,
+          timestamp: new Date().toISOString(),
+          id: generateRowId() // Unique ID for this allotment
+        };
+        
+        // Store in sessionStorage
+        sessionStorage.setItem('allotmentData', JSON.stringify(allotmentData));
+        
+        showToast('Allotment table created successfully!', 'success');
+        
+        // Redirect to allotment page or open in new window
+         window.location.href = 'allotment.html';
+        
+      } catch (err) {
+        console.error('Error creating allotment table:', err);
+        showToast('Error creating allotment table: ' + err.message, 'error');
+      }
+    }
+
+    // Open database window
+    function openDatabaseWindow() {
+      // Create a new window
+      const dbWindow = window.open('', 'DatabaseSelection', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no');
+      
+      // Write HTML content to the new window
+      dbWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Select Data from Database</title>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+          <style>
+            body {
+              font-family: 'Inter', sans-serif;
+              margin: 0;
+              padding: 20px;
+              background-color: #f5f7fb;
+              color: #1a1a2e;
+            }
+            
+            .container {
+              max-width: 1200px;
+              margin: 0 auto;
+            }
+            
+            .header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 20px;
+              padding-bottom: 15px;
+              border-bottom: 1px solid #ddd;
+            }
+            
+            .header h1 {
+              margin: 0;
+              color: #4361ee;
+            }
+            
+            .close-btn {
+              background: #f72585;
+              color: white;
+              border: none;
+              padding: 10px 15px;
+              border-radius: 5px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 5px;
+            }
+            
+            .close-btn:hover {
+              background: #e01171;
+            }
+            
+            .search-container {
+              margin-bottom: 20px;
+            }
+            
+            .search-box {
+              position: relative;
+              width: 100%;
+              max-width: 500px;
+            }
+            
+            .search-box input {
+              width: 100%;
+              padding: 10px 15px;
+              border-radius: 5px;
+              border: 1px solid #ddd;
+              font-size: 16px;
+            }
+            
+            .search-box i {
+              position: absolute;
+              right: 15px;
+              top: 50%;
+              transform: translateY(-50%);
+              color: #6c757d;
+            }
+            
+            .table-container {
+              overflow-x: auto;
+              border-radius: 10px;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+              background: white;
+              max-height: 600px;
+              overflow-y: auto;
+            }
+            
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            
+            th {
+              background: #4361ee;
+              color: white;
+              padding: 15px;
+              text-align: left;
+              position: sticky;
+              top: 0;
+            }
+            
+            td {
+              padding: 12px 15px;
+              border-bottom: 1px solid #ddd;
+            }
+            
+            tr:nth-child(even) {
+              background: #f9f9f9;
+            }
+            
+            tr:hover {
+              background: #f1f1f1;
+            }
+            
+            .select-btn {
+              background: #4cc9f0;
+              color: white;
+              border: none;
+              padding: 8px 12px;
+              border-radius: 4px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              gap: 5px;
+            }
+            
+            .select-btn:hover {
+              background: #00a8d4;
+            }
+            
+            .loading {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              gap: 10px;
+              padding: 30px;
+              color: #6c757d;
+            }
+            
+            .loading i {
+              animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1><i class="fas fa-database"></i> Select Data from Database</h1>
+              <button class="close-btn" onclick="window.close()">
+                <i class="fas fa-times"></i> Close
+              </button>
+            </div>
+            
+            <div class="search-container">
+              <div class="search-box">
+                <input type="text" id="dbSearch" placeholder="Search in database...">
+                <i class="fas fa-search"></i>
+              </div>
+            </div>
+            
+            <div id="dbTableContainer" class="table-container">
+              <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <span>Loading data from all_csv_data table...</span>
+              </div>
+            </div>
+          </div>
+          
+          <script>
+            // Load database data when window opens
+            window.onload = async function() {
+              try {
+                // Fetch data from the all_csv_data table using Electron API
+                const dbData = await window.opener.electronAPI.getTableData('all_csv_data');
+                
+                if (!dbData || dbData.length === 0) {
+                  document.getElementById('dbTableContainer').innerHTML = 
+                    '<div class="loading"><i class="fas fa-database"></i><span>No data found in all_csv_data table.</span></div>';
+                  return;
+                }
+                
+                // Get headers from the first row
+                const dbHeaders = Object.keys(dbData[0]);
+                
+                // Create table
+                let html = '<table><thead><tr>';
+                
+                // Add headers
+                dbHeaders.forEach(h => {
+                  // Format header for display
+                  const formattedHeader = h.replace(/[_]+/g, ' ').replace(/\\b\\w/g, l => l.toUpperCase()).trim();
+                  html += '<th>' + formattedHeader + '</th>';
+                });
+                
+                html += '<th>Action</th></tr></thead><tbody>';
+                
+                // Add rows with data
+                dbData.forEach((row, index) => {
+                  html += '<tr>';
+                  
+                  dbHeaders.forEach(h => {
+                    const cell = row[h] !== null && row[h] !== undefined ? row[h] : '-';
+                    html += '<td>' + cell + '</td>';
+                  });
+                  
+                  // Add select button
+                  html += '<td>' +
+                    '<button class="select-btn" onclick="selectRow(' + index + ')">' +
+                    '<i class="fas fa-plus"></i> Select' +
+                    '</button>' +
+                    '</td>';
+                  
+                  html += '</tr>';
+                });
+                
+                html += '</tbody></table>';
+                
+                document.getElementById('dbTableContainer').innerHTML = html;
+                
+                // Store the data for later use
+                window.dbData = dbData;
+                
+                // Set up search functionality
+                document.getElementById('dbSearch').addEventListener('input', function() {
+                  const searchTerm = this.value.toLowerCase();
+                  const rows = document.querySelectorAll('#dbTableContainer tbody tr');
+                  
+                  rows.forEach(row => {
+                    let rowMatch = false;
+                    const cells = row.querySelectorAll('td');
+                    
+                    cells.forEach(cell => {
+                      const cellText = cell.textContent.toLowerCase();
+                      if (cellText.includes(searchTerm)) {
+                        rowMatch = true;
+                      }
+                    });
+                    
+                    row.style.display = rowMatch ? '' : 'none';
+                  });
+                });
+                
+              } catch (err) {
+                console.error(err);
+                document.getElementById('dbTableContainer').innerHTML = 
+                  '<div class="loading" style="color: #f72585;">' +
+                  '<i class="fas fa-exclamation-triangle"></i>' +
+                  '<span>Error loading table data: ' + err.message + '</span>' +
+                  '</div>';
+              }
+            };
+            
+            // Function to select a row and add it to the main window
+            function selectRow(index) {
+              const selectedRow = window.dbData[index];
+              
+              // Send the selected row back to the main window
+              window.opener.addDatabaseRow(selectedRow);
+              
+              // Close the window
+              window.close();
+            }
+          <\/script>
+        </body>
+        </html>
+      `);
+      
+      dbWindow.document.close();
+    }
+
+    // Function to add a database row to the main table
+    function addDatabaseRow(rowData) {
+      // Get the current selection data
+      const selectionData = JSON.parse(sessionStorage.getItem('selectedRows'));
+      
+      if (!selectionData) {
+        showToast('No selection data found', 'error');
+        return;
+      }
+      
+      // Add the new row to the selection data
+      selectionData.rows.push(rowData);
+      selectionData.selectedCount++;
+      
+      // Update session storage
+      sessionStorage.setItem('selectedRows', JSON.stringify(selectionData));
+      
+      // Update the table display
+      displaySelectedTable(selectionData);
+      
+      // Update selection info
+      document.querySelector('.exam-info-value:nth-child(2)').textContent = 
+        `${selectionData.selectedCount} of ${selectionData.totalRows}`;
+        
+      // Update header info
+      const headerInfoItems = document.querySelectorAll('.header-info-item');
+      if (headerInfoItems.length >= 3) {
+        headerInfoItems[2].querySelector('span').textContent = `${selectionData.selectedCount} rows selected`;
+      }
+      
+      showToast('Row added from database successfully!', 'success');
+    }
+
+    // Search functionality
+    function setupSearch() {
+      const searchInput = document.getElementById('tableSearch');
+      const clearBtn = document.getElementById('clearSearch');
+      
+      if (searchInput && clearBtn) {
+        // Initialize with clear button hidden
+        clearBtn.classList.remove('visible');
+        
+        searchInput.addEventListener('input', function() {
+          const searchTerm = this.value.trim();
+          
+          // Toggle clear button visibility
+          if (searchTerm.length > 0) {
+            clearBtn.classList.add('visible');
+          } else {
+            clearBtn.classList.remove('visible');
+          }
+          
+          if (searchTerm) {
+            highlightSearchResults(searchTerm.toLowerCase());
+          } else {
+            clearSearchHighlights();
+          }
+        });
+        
+        clearBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          searchInput.value = '';
+          searchInput.focus();
+          this.classList.remove('visible');
+          clearSearchHighlights();
+        });
+      }
+    }
+
+    function highlightSearchResults(searchTerm) {
+      let hasResults = false;
+      let firstMatch = null;
+      const rows = document.querySelectorAll('#tableContainer tbody tr');
+      
+      // Create or get no results element
+      let noResults = document.querySelector('.no-results');
+      if (!noResults) {
+        noResults = document.createElement('div');
+        noResults.className = 'no-results';
+        noResults.textContent = 'No matching results found';
+        document.getElementById('tableContainer').appendChild(noResults);
+      }
+      
+      rows.forEach(row => {
+        let rowMatch = false;
+        const cells = row.querySelectorAll('td:not(.action-buttons)');
+        
+        cells.forEach(cell => {
+          const cellText = cell.textContent.toLowerCase();
+          const originalContent = cell.getAttribute('data-original') || cell.textContent;
+          
+          if (cellText.includes(searchTerm)) {
+            rowMatch = true;
+            const highlightedContent = originalContent.replace(
+              new RegExp(searchTerm, 'gi'),
+              match => '<span class="search-highlight">' + match + '</span>'
+            );
+            cell.innerHTML = highlightedContent;
+          } else {
+            cell.innerHTML = originalContent;
+          }
+        });
+        
+        if (rowMatch) {
+          hasResults = true;
+          row.style.display = '';
+          // Store the first matching row for scrolling
+          if (!firstMatch) {
+            firstMatch = row;
+          }
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      
+      // Show/hide no results message
+      noResults.style.display = hasResults ? 'none' : 'block';
+      
+      // Scroll to the first matching row if found
+      if (firstMatch) {
+        firstMatch.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function clearSearchHighlights() {
+      const rows = document.querySelectorAll('#tableContainer tbody tr');
+      const noResults = document.querySelector('.no-results');
+      
+      if (noResults) {
+        noResults.style.display = 'none';
+      }
+      
+      rows.forEach(row => {
+        row.style.display = '';
+        const cells = row.querySelectorAll('td:not(.action-buttons)');
+        
+        cells.forEach(cell => {
+          const originalContent = cell.getAttribute('data-original') || cell.textContent;
+          cell.innerHTML = originalContent;
+        });
+      });
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      applyTheme();
+      loadSelectedData();
+      
+      // Set up dark mode toggle
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      if (darkModeToggle) {
+        darkModeToggle.addEventListener('change', function() {
+          if (this.checked) {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('theme', 'light');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,2661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Allotment Data Viewer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for the entire page */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 6px;
+  border: 3px solid var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-color);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--bg-color);
+}
+
+/* Smooth scrolling for all containers with overflow */
+.container, .exam-info-container, .table-container {
+  scroll-behavior: smooth;
+}
+
+/* Header shadow on scroll */
+header {
+  transition: box-shadow 0.3s ease;
+}
+
+header.scrolled {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Back to top button */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: var(--primary-dark);
+  transform: translateY(-5px);
+}
+
+/* Smooth transitions for all interactive elements */
+a, button, .btn, .action-button, .back-btn {
+  transition: var(--transition);
+}
+
+/* Focus states for better accessibility */
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Smooth loading transitions */
+.loading {
+  transition: opacity 0.3s ease;
+}
+
+/* Toast notification smooth transitions */
+.toast {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Search box focus transition */
+.search-box input:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Theme toggle smooth transition */
+.theme-toggle {
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+}
+
+/* Card hover effects */
+.exam-info-item, .file-info-item {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.exam-info-item:hover, .file-info-item:hover {
+  transform: translateY(-2px);
+}
+
+/* Button hover effects with smooth transitions */
+.btn:hover, .action-button:hover, .back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile menu smooth transitions */
+@media (max-width: 768px) {
+  .header-info {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .header-info.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Loading spinner smooth animation */
+.loading i {
+  animation: spin 1s linear infinite;
+  transition: opacity 0.3s ease;
+}
+
+/* Fade in animation for content */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container > * {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Staggered animation for exam info items */
+.exam-info-item {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.exam-info-item:nth-child(1) { animation-delay: 0.1s; }
+.exam-info-item:nth-child(2) { animation-delay: 0.2s; }
+.exam-info-item:nth-child(3) { animation-delay: 0.3s; }
+.exam-info-item:nth-child(4) { animation-delay: 0.4s; }
+.exam-info-item:nth-child(5) { animation-delay: 0.5s; }
+
+    /* Your existing CSS styles remain the same */
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --accent: #4895ef;
+      --light: #f8f9fa;
+      --dark: #1a1a2e;
+      --gray: #6c757d;
+      --success: #4cc9f0;
+      --danger: #f72585;
+      --warning: #f8961e;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --bg-color: #f5f7fb;
+      --text-color: #1a1a2e;
+      --header-bg: linear-gradient(135deg, var(--primary), var(--accent));
+      --card-bg: white;
+      --sidebar-bg: white;
+      --footer-bg: white;
+      --container-bg: white;
+      --table-header-bg: var(--primary);
+      --table-row-even: #f9f9f9;
+      --table-row-hover: #f1f1f1;
+      --highlight-color: #fffacd;
+      --border-color: #e0e0e0;
+    }
+
+    .dark-mode {
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
+      --header-bg: linear-gradient(135deg, #1a1a2e, #16213e);
+      --card-bg: #1e1e1e;
+      --sidebar-bg: #1e1e1e;
+      --footer-bg: #1e1e1e;
+      --container-bg: #1e1e1e;
+      --table-header-bg: #2a2a2a;
+      --table-row-even: #252525;
+      --table-row-hover: #2e2e2e;
+      --highlight-color: #3a3a00;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+      --border-color: #444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      padding: 20px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .header-info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .header-info-item i {
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .header-info {
+        display: none;
+      }
+    }
+
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .header-title i {
+      font-size: 1.2rem;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .toggle-icon {
+      font-size: 1rem;
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .exam-info-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .exam-info-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 200px;
+      flex: 1 1 200px;
+    }
+
+    .exam-info-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .exam-info-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .exam-info-label {
+      font-size: 13px;
+      color: var(--gray);
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .exam-info-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .file-info-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 200px;
+      flex: 1 1 200px;
+    }
+
+    .file-info-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: #f72585;
+    }
+
+    .file-info-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-info-label {
+      font-size: 13px;
+      color: var(--gray);
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .file-info-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-color);
+      word-break: break-all;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(0,0,0,0.1);
+      margin: 20px 0;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Updated table container styles */
+    .table-container {
+      margin: 30px 0;
+      overflow-x: auto;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      max-height: calc(100vh - 250px);
+      position: relative;
+      border: 1px solid var(--border-color);
+        background: var(--card-bg);
+    }
+
+    /* Updated table styles */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--card-bg);
+      table-layout: auto;
+        font-size: 14px;
+  line-height: 1.4;
+    }
+
+    /* Main headers (first row) */
+    th.main-header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 16px 12px;
+  text-align: center;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 2px solid var(--border-color);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+    /* Sub headers (second row) */
+  th.sub-header {
+  background: linear-gradient(135deg, var(--accent), var(--primary));
+  color: white;
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: 500;
+  position: sticky;
+  top: 58px;
+  z-index: 11;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 13px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+/* Blocks sub headers (third row) - Different color for distinction */
+th.sub-header.blocks-header {
+  background: linear-gradient(135deg, var(--primary-dark), #2c4fdb);
+  color: white;
+  padding: 10px 6px;
+  text-align: center;
+  font-weight: 500;
+  position: sticky;
+  top: 108px;
+  z-index: 10;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+    /* Regular data cells */
+    td {
+     padding: 14px 12px;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  text-align: left;
+  color: var(--text-color);
+  background: var(--card-bg);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  position: relative;
+    }
+
+    /* Remove right border from last cell in each row */
+    td:last-child, th:last-child {
+      border-right: none;
+    }
+
+    tr:nth-child(even) {
+      background: var(--table-row-even);
+    }
+
+    tr:hover {
+      background: var(--table-row-hover);
+    }
+tr:hover td {
+  transform: translateY(0);
+  box-shadow: inset 0 -1px 0 var(--border-color);
+}
+
+ .highlight {
+  background: linear-gradient(135deg, var(--highlight-color), #fff8b3) !important;
+  font-weight: 600;
+  color: var(--dark);
+  box-shadow: inset 0 0 0 1px rgba(255, 204, 0, 0.3);
+}
+/* Allocated session cells - Modern highlight style */
+.allocated {
+  background: linear-gradient(135deg, rgba(76, 201, 240, 0.25), rgba(76, 201, 240, 0.15)) !important;
+  font-weight: 600;
+  color: var(--success);
+  text-align: center;
+  box-shadow: inset 0 0 0 1px rgba(76, 201, 240, 0.2);
+  border-radius: 4px;
+  margin: 2px;
+}
+
+.allocated::before {
+  content: "✓";
+  margin-right: 4px;
+  font-weight: bold;
+}
+
+/* Dark mode specific table enhancements */
+.dark-mode .table-container {
+  border-color: #444;
+}
+
+.dark-mode th.main-header {
+  background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+  border-right-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode th.sub-header {
+  background: linear-gradient(135deg, #333, #2a2a2a);
+}
+
+.dark-mode th.sub-header.blocks-header {
+  background: linear-gradient(135deg, #252525, #1f1f1f);
+}
+
+.dark-mode .allocated {
+  background: linear-gradient(135deg, rgba(76, 201, 240, 0.2), rgba(76, 201, 240, 0.1)) !important;
+  color: #88e0ff;
+  box-shadow: inset 0 0 0 1px rgba(76, 201, 240, 0.3);
+}
+
+.dark-mode .highlight {
+  background: linear-gradient(135deg, #3a3a00, #2a2a00) !important;
+  color: #ffff88;
+}
+
+.dark-mode .total-row {
+  background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+}
+
+/* Smooth scrolling for table */
+.table-container::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: var(--table-row-even);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Animation for allocated cells */
+@keyframes pulseAllocated {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.allocated {
+  animation: pulseAllocated 0.3s ease;
+}
+
+/* Focus states for accessibility */
+td:focus, th:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  z-index: 5;
+}
+
+/* Responsive table adjustments */
+@media (max-width: 768px) {
+  .table-container {
+    border-radius: 8px;
+  }
+  
+  th.main-header {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+  
+  th.sub-header {
+    padding: 10px 6px;
+    font-size: 12px;
+    top: 48px;
+  }
+  
+  th.sub-header.blocks-header {
+    padding: 8px 5px;
+    font-size: 11px;
+    top: 88px;
+  }
+  
+  td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+  
+  .session-header {
+    top: 48px;
+  }
+  
+  .allocated {
+    font-size: 12px;
+    padding: 6px 4px;
+  }
+}
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-top: 20px;
+      transition: var(--transition);
+    }
+
+    .back-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 30px;
+      color: var(--gray);
+    }
+
+    .loading i {
+      animation: spin 1s linear infinite;
+    }
+
+    th.checkbox-column, td.checkbox-column {
+      width: 40px;
+      text-align: center;
+    }
+    
+    .proceed-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      margin: 15px 0;
+      display: none;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      border-radius: 8px;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      color: white;
+      background-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .toast-success {
+      background-color: #4BB543;
+    }
+
+    .toast-error {
+      background-color: var(--danger);
+    }
+
+    .toast-warning {
+      background-color: var(--warning);
+    }
+
+    .fade-out {
+      animation: fadeOut 0.5s ease-out forwards;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .exam-info-container {
+        gap: 15px;
+        padding: 15px;
+      }
+      
+      .exam-info-item {
+        min-width: 160px;
+        flex: 1 1 160px;
+      }
+      
+      th, td {
+        padding: 10px 12px;
+      }
+    }
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+
+    .action-btn {
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .edit-btn {
+      background-color: var(--warning);
+      color: white;
+    }
+
+    .edit-btn:hover {
+      background-color: #e07e00;
+    }
+
+    .save-btn {
+      background-color: var(--success);
+      color: white;
+      display: none;
+    }
+
+    .save-btn:hover {
+      background-color: #00a8d4;
+    }
+
+    .delete-btn {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background-color: #e01171;
+    }
+
+    .editable {
+      background-color: var(--highlight-color);
+      outline: 1px solid var(--warning);
+    }
+
+    .editable-input {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: white;
+      color: var(--dark);
+    }
+    .action-buttons-container {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  font-size: 14px;
+}
+
+.action-button.primary {
+  background: var(--primary);
+  color: white;
+}
+
+.action-button.primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-button.secondary {
+  background: var(--success);
+  color: white;
+}
+
+.action-button.secondary:hover {
+  background: #00a8d4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+    @media (max-width: 480px) {
+      .exam-info-container {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .exam-info-item {
+        width: 100%;
+      }
+      
+      header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .header-title {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .theme-toggle {
+        margin-top: 0.5rem;
+      }
+      
+      .proceed-container {
+        justify-content: center;
+      }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+   .search-container {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 12px;
+      color: var(--gray);
+      z-index: 1;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 40px 10px 40px; /* Extra right padding for clear button */
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 14px;
+      transition: var(--transition);
+      box-shadow: var(--card-shadow);
+    }
+    .clear-btn {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: var(--gray);
+      cursor: pointer;
+      padding: 5px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.8);
+      z-index: 2;
+    }
+
+    .clear-btn.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    .clear-btn:hover {
+      background-color: rgba(0,0,0,0.1);
+      color: var(--danger);
+    }
+
+    .clear-btn i {
+      font-size: 12px;
+      transition: var(--transition);
+    }
+
+    .search-highlight {
+      background-color: var(--highlight-color);
+      font-weight: 600;
+      padding: 2px;
+      border-radius: 3px;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 20px;
+      color: var(--danger);
+      font-weight: 500;
+      display: none;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .header-info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .header-info-item i {
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .header-info {
+        display: none;
+      }
+    }
+    .action-button.warning {
+  background: var(--warning);
+  color: white;
+}
+
+.action-button.warning:hover {
+  background: #e07e00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+  </style>
+</head>
+<body>
+   <header>
+    <div class="header-title">
+      <h1 id="tableTitle">Allotment Data Viewer</h1>
+    </div>
+    <div class="header-info" id="headerInfo">
+      <!-- Exam file and table info will be populated here -->
+    </div>
+    <div class="theme-toggle" id="themeToggle">
+      <i class="fas fa-moon toggle-icon"></i>
+      <label class="toggle-switch">
+        <input type="checkbox" id="darkModeToggle">
+        <span class="slider"></span>
+      </label>
+      <i class="fas fa-sun toggle-icon"></i>
+    </div>
+  </header>
+  <div class="search-container">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="tableSearch" placeholder="Search in table...">
+      <button id="clearSearch" class="clear-btn" title="Clear search">
+        <i class="fas fa-times"></i> 
+      </button>
+    </div>
+  </div>
+  <div class="container">
+    <div id="allotmentInfo" class="exam-info-container">
+      <!-- Allotment information will be populated here -->
+    </div>
+    
+    <div id="selectedDataContainer">
+      <div class="section-title">
+        <i class="fas fa-table"></i> Selected Data (with Date from Exam File)
+      </div>
+      <div id="selectedTableContainer" class="table-container">
+        <div class="loading">
+          <i class="fas fa-spinner"></i>
+          <span>Loading selected data...</span>
+        </div>
+      </div>
+    </div>
+    <!-- ADD THESE BUTTONS AFTER YOUR EXISTING BACK BUTTON -->
+<div class="action-buttons-container">
+    <button class="action-button warning" onclick="reassignAllocations()">
+    <i class="fas fa-random"></i> Reassign Teachers
+  </button>
+  <button class="action-button primary" onclick="downloadAllocationExcel()">
+    <i class="fas fa-download"></i> Download Excel
+  </button>
+
+  <button class="action-button secondary" onclick="saveTableToDatabase()">
+  <i class="fas fa-save"></i> Save Table & View
+</button>
+</div>
+
+    
+    <div id="examDataContainer">
+      <div class="section-title">
+        <i class="fas fa-file-excel"></i> Exam File Data
+      </div>
+      <div id="examTableContainer" class="table-container">
+        <div class="loading">
+          <i class="fas fa-spinner"></i>
+          <span>Loading exam data...</span>
+        </div>
+      </div>
+    </div>
+    
+    <a href="index.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Selection 
+    </a>
+    
+  </div>
+  
+<script>
+// Apply theme based on user preference
+function applyTheme() {
+  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+  let currentTheme = localStorage.getItem('theme');
+  
+  // Use system preference if no theme is set
+  if (!currentTheme) {
+    currentTheme = prefersDarkScheme.matches ? 'dark' : 'light';
+    localStorage.setItem('theme', currentTheme);
+  }
+  
+  // Apply the stored theme
+  if (currentTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+    document.getElementById('darkModeToggle').checked = true;
+  }
+}
+
+// Database configuration
+const DB_CONFIG = {
+  NAME: 'examUploadDb',
+  HOST: window.location.hostname || 'localhost',
+  PORT: 3306,
+  API_ENDPOINT: '/api/exam-data'
+};
+
+// Fetch data from the examUploadDb database
+async function fetchDataFromDatabase(tableName) {
+  try {
+    const response = await fetch(`${DB_CONFIG.API_ENDPOINT}?table=${encodeURIComponent(tableName)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Database error: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    if (data.error) {
+      throw new Error(data.error);
+    }
+    
+  return data;
+  } catch (error) {
+    console.error('Error fetching from database:', error);
+    throw error;
+  }
+}
+
+// Helper function to escape HTML
+function escapeHtml(unsafe) {
+  return unsafe
+    .toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// Format table headers
+function formatHeader(header) {
+  return header.replace(/[_]+/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).trim();
+}
+
+// Toast notification function
+function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    setTimeout(() => toast.remove(), 500);
+  }, 3000);
+}
+
+// Find date columns in data
+function findDateColumns(data) {
+  let dateColumns = [];
+  
+  // Check headers for date-related column names
+  const headers = data.headers || [];
+  
+  headers.forEach(header => {
+    const headerLower = header.toLowerCase();
+    // Only include columns with "date" but not "start" or "end"
+    if (headerLower.includes('date') && !headerLower.includes('start') && !headerLower.includes('end')) {
+      dateColumns.push(header);
+    }
+  });
+  
+  return dateColumns;
+}
+
+// Find Morning Subject column
+function findMorningSubjectColumn(data) {
+  const headers = data.headers || [];
+  
+  // Look for Morning Subject column
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('morning') && headerLower.includes('subject')) {
+      return header;
+    }
+  }
+  
+  // If not found, try alternative names
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('subject') && !headerLower.includes('evening') && !headerLower.includes('code')) {
+      return header;
+    }
+  }
+  
+  return null;
+}
+
+// Find Evening Subject column
+function findEveningSubjectColumn(data) {
+  const headers = data.headers || [];
+  
+  // Look for Evening Subject column
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('evening') && headerLower.includes('subject')) {
+      return header;
+    }
+  }
+  
+  // If not found, try alternative names
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('subject') && headerLower.includes('evening')) {
+      return header;
+    }
+  }
+  
+  return null;
+}
+
+// Find Morning Subject Code column
+function findMorningSubjectCodeColumn(data) {
+  const headers = data.headers || [];
+  
+  // Look for Subject Code column
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('subject') && headerLower.includes('code') && !headerLower.includes('1')) {
+      return header;
+    }
+  }
+  
+  // If not found, try alternative names
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('code') && !headerLower.includes('1') && !headerLower.includes('exam')) {
+      return header;
+    }
+  }
+  
+  return null;
+}
+
+// Find Evening Subject Code column
+function findEveningSubjectCodeColumn(data) {
+  const headers = data.headers || [];
+  
+  // Look for Subject Code 1 column (with space between code and 1)
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('subject') && headerLower.includes('code') && headerLower.includes('1')) {
+      return header;
+    }
+  }
+  
+  // If not found, try alternative names
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('code') && headerLower.includes('1') && !headerLower.includes('exam')) {
+      return header;
+    }
+  }
+  
+  return null;
+}
+
+// Find Morning Blocks column
+function findMorningBlocksColumn(data) {
+  const headers = data.headers || [];
+  
+  // Look for Morning Blocks column
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('morning') && headerLower.includes('blocks')) {
+      return header;
+    }
+  }
+  
+  // If not found, try alternative names
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('blocks') && !headerLower.includes('evening')) {
+      return header;
+    }
+  }
+  
+  return null;
+}
+
+// Find Evening Blocks column
+function findEveningBlocksColumn(data) {
+  const headers = data.headers || [];
+  
+  // Look for Evening Blocks column
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('evening') && headerLower.includes('blocks')) {
+      return header;
+    }
+  }
+  
+  // If not found, try alternative names
+  for (const header of headers) {
+    const headerLower = header.toLowerCase();
+    if (headerLower.includes('blocks') && headerLower.includes('evening')) {
+      return header;
+    }
+  }
+  
+  return null;
+}
+
+// Extract values from exam table for specific columns
+function extractColumnValues(examTable, columns) {
+  if (!columns || !examTable.rows) return {};
+  
+  const values = {};
+  columns.forEach(column => {
+    values[column] = examTable.rows.map(row => row[column] || '');
+  });
+  
+  return values;
+}
+
+// Get unique dates from date values
+function getUniqueDates(dateValues) {
+  const allDates = [];
+  
+  // Collect all dates from all date columns
+  for (const column in dateValues) {
+    if (dateValues.hasOwnProperty(column)) {
+      dateValues[column].forEach(date => {
+        if (date && !allDates.includes(date)) {
+          allDates.push(date);
+        }
+      });
+    }
+  }
+  
+  return allDates.sort();
+}
+
+// Get date-subject mapping for both morning and evening
+function getDateSubjectMapping(dateValues, morningSubjectValues, morningSubjectColumn, eveningSubjectValues, eveningSubjectColumn, morningSubjectCodeValues, morningSubjectCodeColumn, eveningSubjectCodeValues, eveningSubjectCodeColumn, morningBlocksValues, morningBlocksColumn, eveningBlocksValues, eveningBlocksColumn) {
+  const dateSubjectMap = {};
+  
+  // For each date column, map dates to morning and evening subjects
+  for (const dateColumn in dateValues) {
+    if (dateValues.hasOwnProperty(dateColumn)) {
+      dateValues[dateColumn].forEach((date, index)=> {
+        if (date) {
+          if (!dateSubjectMap[date]) {
+            dateSubjectMap[date] = {
+              morning: new Set(),
+              evening: new Set(),
+              morningCodes: new Set(),
+              eveningCodes: new Set(),
+              morningBlocks: new Set(),
+              eveningBlocks: new Set()
+            };
+          }
+          
+          // Add morning subject
+          if (morningSubjectColumn && morningSubjectValues[morningSubjectColumn]) {
+            const morningSubject = morningSubjectValues[morningSubjectColumn][index] || '';
+            if (morningSubject) {
+              dateSubjectMap[date].morning.add(morningSubject);
+              
+              // Add morning subject code if available
+              let morningDisplay = morningSubject;
+              if (morningSubjectCodeColumn && morningSubjectCodeValues[morningSubjectCodeColumn]) {
+                const morningSubjectCode = morningSubjectCodeValues[morningSubjectCodeColumn][index] || '';
+                if (morningSubjectCode) {
+                  morningDisplay += ` (${morningSubjectCode})`;
+                }
+              }
+              
+              // Add morning blocks if available
+              if (morningBlocksColumn && morningBlocksValues[morningBlocksColumn]) {
+                const morningBlocks = morningBlocksValues[morningBlocksColumn][index] || '';
+                if (morningBlocks) {
+                  morningDisplay += ` [${morningBlocks}]`;
+                }
+              }
+              
+              dateSubjectMap[date].morningCodes.add(morningDisplay);
+            }
+          }
+          
+          // Add evening subject
+          if (eveningSubjectColumn && eveningSubjectValues[eveningSubjectColumn]) {
+            const eveningSubject = eveningSubjectValues[eveningSubjectColumn][index] || '';
+            if (eveningSubject) {
+              dateSubjectMap[date].evening.add(eveningSubject);
+              
+              // Add evening subject code if available
+              let eveningDisplay = eveningSubject;
+              if (eveningSubjectCodeColumn && eveningSubjectCodeValues[eveningSubjectCodeColumn]) {
+                const eveningSubjectCode = eveningSubjectCodeValues[eveningSubjectCodeColumn][index] || '';
+                if (eveningSubjectCode) {
+                  eveningDisplay += ` (${eveningSubjectCode})`;
+                }
+              }
+              
+              // Add evening blocks if available
+              if (eveningBlocksColumn && eveningBlocksValues[eveningBlocksColumn]) {
+                const eveningBlocks = eveningBlocksValues[eveningBlocksColumn][index] || '';
+                if (eveningBlocks) {
+                  eveningDisplay += ` [${eveningBlocks}]`;
+                }
+              }
+              
+              dateSubjectMap[date].eveningCodes.add(eveningDisplay);
+            }
+          }
+        }
+      });
+    }
+  }
+  
+  // Convert Sets to Arrays
+  for (const date in dateSubjectMap) {
+    dateSubjectMap[date].morning = Array.from(dateSubjectMap[date].morning);
+    dateSubjectMap[date].evening = Array.from(dateSubjectMap[date].evening);
+    dateSubjectMap[date].morningCodes = Array.from(dateSubjectMap[date].morningCodes);
+    dateSubjectMap[date].eveningCodes = Array.from(dateSubjectMap[date].eveningCodes);
+  }
+  
+  return dateSubjectMap;
+}
+
+// Load allotment data from sessionStorage or database
+async function loadAllotmentData() {
+  try {
+    // Get allotment data from sessionStorage first
+    const allotmentData = JSON.parse(sessionStorage.getItem('allotmentData'));
+    
+    let examTableData, selectedTableData, timestamp;
+    
+    if (allotmentData) {
+      // Use session data if available
+      examTableData = allotmentData.examTable;
+      selectedTableData = allotmentData.selectedTable;
+      timestamp = allotmentData.timestamp;
+    } else {
+      // Try to get data from database or URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      let examFileName = urlParams.get('exam');
+      
+      // If not in URL, try to get from other sources
+      if (!examFileName) {
+        examFileName = sessionStorage.getItem('lastExamFileName');
+        
+        if (!examFileName) {
+          throw new Error('No exam data found. Please go back and create an allotment first.');
+        }
+      }
+      
+      // Fetch data from database
+      try {
+        const dbData = await fetchDataFromDatabase(examFileName);
+        examTableData = dbData.examTable;
+        selectedTableData = dbData.selectedTable;
+        timestamp = dbData.timestamp || new Date().toISOString();
+        
+        // Store the exam file name for future use
+        sessionStorage.setItem('lastExamFileName', examFileName);
+      } catch (dbError) {
+        console.error('Database error:', dbError);
+        throw new Error('Could not load data from database. Please create a new allotment.');
+      }
+    }
+    
+    if (!examTableData || !selectedTableData) {
+      throw new Error('Invalid data format. Please go back and create an allotment first.');
+    }
+    
+    // Set title
+    document.getElementById('tableTitle').textContent = `📊 Allotment Data`;
+    document.title = `📊 Allotment Data | Data Viewer`;
+
+    // Find all date columns from exam table
+    const examDateColumns = findDateColumns(examTableData);
+    
+    // Find Morning Subject column
+    const morningSubjectColumn = findMorningSubjectColumn(examTableData);
+    
+    // Find Evening Subject column
+    const eveningSubjectColumn = findEveningSubjectColumn(examTableData);
+    
+    // Find Morning Subject Code column
+    const morningSubjectCodeColumn = findMorningSubjectCodeColumn(examTableData);
+    
+    // Find Evening Subject Code column
+    const eveningSubjectCodeColumn = findEveningSubjectCodeColumn(examTableData);
+    
+    // Find Morning Blocks column
+    const morningBlocksColumn = findMorningBlocksColumn(examTableData);
+    
+    // Find Evening Blocks column
+    const eveningBlocksColumn = findEveningBlocksColumn(examTableData);
+    
+    // Create a data object with all required properties
+    const processedData = {
+      examTable: examTableData,
+      selectedTable: selectedTableData,
+      dateColumns: examDateColumns,
+      morningSubjectColumn: morningSubjectColumn,
+      eveningSubjectColumn: eveningSubjectColumn,
+      morningSubjectCodeColumn: morningSubjectCodeColumn,
+      eveningSubjectCodeColumn: eveningSubjectCodeColumn,
+      morningBlocksColumn: morningBlocksColumn,
+      eveningBlocksColumn: eveningBlocksColumn,
+      timestamp: timestamp
+    };
+    
+    // Display header info
+    displayHeaderInfo(processedData);
+    
+    // Display allotment info
+    displayAllotmentInfo(processedData);
+    
+    // Extract date values from exam table for all date columns
+    const dateValues = extractColumnValues(examTableData, examDateColumns);
+    
+    // Extract Morning Subject values
+    const morningSubjectValues = morningSubjectColumn 
+      ? extractColumnValues(examTableData, [morningSubjectColumn])
+      : {};
+    
+    // Extract Evening Subject values
+    const eveningSubjectValues = eveningSubjectColumn 
+      ? extractColumnValues(examTableData, [eveningSubjectColumn])
+      : {};
+    
+    // Extract Morning Subject Code values
+    const morningSubjectCodeValues = morningSubjectCodeColumn 
+      ? extractColumnValues(examTableData, [morningSubjectCodeColumn])
+      : {};
+    
+    // Extract Evening Subject Code values
+    const eveningSubjectCodeValues = eveningSubjectCodeColumn 
+      ? extractColumnValues(examTableData, [eveningSubjectCodeColumn])
+      : {};
+    
+    // Extract Morning Blocks values
+    const morningBlocksValues = morningBlocksColumn 
+      ? extractColumnValues(examTableData, [morningBlocksColumn])
+      : {};
+    
+    // Extract Evening Blocks values
+    const eveningBlocksValues = eveningBlocksColumn 
+      ? extractColumnValues(examTableData, [eveningBlocksColumn])
+      : {};
+    
+    // Get date-subject mapping for both morning and evening
+    const dateSubjectMap = getDateSubjectMapping(
+      dateValues, 
+      morningSubjectValues, 
+      morningSubjectColumn, 
+      eveningSubjectValues, 
+      eveningSubjectColumn,
+      morningSubjectCodeValues,
+      morningSubjectCodeColumn,
+      eveningSubjectCodeValues,
+      eveningSubjectCodeColumn,
+      morningBlocksValues,
+      morningBlocksColumn,
+      eveningBlocksValues,
+      eveningBlocksColumn
+    );
+    
+    processedData.dateValues = dateValues;
+    processedData.morningSubjectValues = morningSubjectValues;
+    processedData.eveningSubjectValues = eveningSubjectValues;
+    processedData.morningSubjectCodeValues = morningSubjectCodeValues;
+    processedData.eveningSubjectCodeValues = eveningSubjectCodeValues;
+    processedData.morningBlocksValues = morningBlocksValues;
+    processedData.eveningBlocksValues = eveningBlocksValues;
+    processedData.dateSubjectMap = dateSubjectMap;
+    
+    // Display the selected data table WITH dates and both morning/evening subjects
+    displaySelectedTable(
+      selectedTableData, 
+      examTableData, 
+      dateValues, 
+      morningSubjectValues, 
+      morningSubjectColumn, 
+      eveningSubjectValues, 
+      eveningSubjectColumn, 
+      morningSubjectCodeValues,
+      morningSubjectCodeColumn,
+      eveningSubjectCodeValues,
+      eveningSubjectCodeColumn,
+      morningBlocksValues,
+      morningBlocksColumn,
+      eveningBlocksValues,
+      eveningBlocksColumn,
+      dateSubjectMap
+    );
+    
+    // Display the exam data table
+    displayExamTable(examTableData);
+    
+    // Set up search functionality
+    setupSearch();
+    
+  } catch (err) {
+    console.error(err);
+    document.getElementById('selectedTableContainer').innerHTML = `
+      <div class="loading" style="color: var(--danger)">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>${err.message}</span>
+      </div>`;
+  }
+}
+
+// Display header information
+function displayHeaderInfo(allotmentData) {
+  const headerInfo = document.getElementById('headerInfo');
+  
+  let headerHtml = `
+    <div class="header-info-item">
+      <i class="fas fa-file-alt"></i>
+      <span>${allotmentData.examTable.tableName}</span>
+    </div>
+    <div class="header-info-item">
+      <i class="fas fa-table"></i>
+      <span>${allotmentData.selectedTable.table}</span>
+    </div>
+    <div class="header-info-item">
+      <i class="fas fa-list"></i>
+      <span>${allotmentData.selectedTable.selectedCount} rows selected</span>
+    </div>
+    <div class="header-info-item">
+      <i class="fas fa-calendar"></i>
+      <span>${new Date(allotmentData.timestamp).toLocaleDateString()}</span>
+    </div>
+  `;
+  
+  headerInfo.innerHTML = headerHtml;
+}
+
+// Display allotment information
+function displayAllotmentInfo(allotmentData) {
+  const allotmentInfo = document.getElementById('allotmentInfo');
+  
+  let infoHtml = `
+    <div class="exam-info-item">
+      <div class="exam-info-icon" style="background-color: var(--primary);">
+        <i class="fas fa-table"></i>
+      </div>
+      <div class="exam-info-text">
+        <div class="exam-info-label">Selected Table</div>
+        <div class="exam-info-value">${allotmentData.selectedTable.table}</div>
+      </div>
+    </div>
+    <div class="exam-info-item">
+      <div class="exam-info-icon" style="background-color: var(--success);">
+        <i class="fas fa-list"></i>
+      </div>
+      <div class="exam-info-text">
+        <div class="exam-info-label">Selected Rows</div>
+        <div class="exam-info-value">${allotmentData.selectedTable.selectedCount} of ${allotmentData.selectedTable.totalRows}</div>
+      </div>
+    </div>
+    <div class="exam-info-item">
+      <div class="exam-info-icon" style="background-color: var(--accent);">
+        <i class="fas fa-file-excel"></i>
+      </div>
+      <div class="exam-info-text">
+        <div class="exam-info-label">Exam File</div>
+        <div class="exam-info-value">${allotmentData.examTable.tableName}</div>
+      </div>
+    </div>
+    <div class="exam-info-item">
+      <div class="exam-info-icon" style="background-color: #f72585;">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="exam-info-text">
+        <div class="exam-info-label">Created At</div>
+        <div class="exam-info-value">${new Date(allotmentData.timestamp).toLocaleString()}</div>
+      </div>
+    </div>
+  `;
+  
+  allotmentInfo.innerHTML = infoHtml;
+}
+
+// Display the selected table data WITH dates and both morning/evening subjects
+// Display the selected table data WITH dates and both morning/evening subjects
+// UPDATED displaySelectedTable function with proper allocation logic
+// Display the selected table data WITH dates and both morning/evening subjects
+function displaySelectedTable(selectedTable, examTable, dateValues, morningSubjectValues, morningSubjectColumn, eveningSubjectValues, eveningSubjectColumn, morningSubjectCodeValues, morningSubjectCodeColumn, eveningSubjectCodeValues, eveningSubjectCodeColumn, morningBlocksValues, morningBlocksColumn, eveningBlocksValues, eveningBlocksColumn, dateSubjectMap, shuffleTeachers = false) {
+  const tableContainer = document.getElementById('selectedTableContainer');
+  const headers = selectedTable.headers;
+  const rows = selectedTable.rows;
+  
+  if (!rows || rows.length === 0) {
+    tableContainer.innerHTML = '<div class="loading"><i class="fas fa-database"></i><span>No selected data found.</span></div>';
+    return;
+  }
+
+  // Find indices of columns to exclude (Source File and Id)
+  const sourceFileIndex = headers.findIndex(h => h.toLowerCase().includes('source'));
+  const idIndex = headers.findIndex(h => h.toLowerCase().includes('id'));
+  
+  // Create display headers by filtering out unwanted columns but keeping Age
+  const displayHeaders = headers.filter((header, index) => {
+    return index !== sourceFileIndex && index !== idIndex;
+  });
+  
+  // Reorder headers to put Age after Designation
+  const designationIndex = displayHeaders.findIndex(h => h.toLowerCase().includes('designation'));
+  const ageIndex = displayHeaders.findIndex(h => h.toLowerCase().includes('age'));
+  
+  if (designationIndex !== -1 && ageIndex !== -1) {
+    // Remove Age from its current position
+    const ageHeader = displayHeaders.splice(ageIndex, 1)[0];
+    // Insert Age after Designation
+    displayHeaders.splice(designationIndex + 1, 0, ageHeader);
+  }
+  
+  // Get all unique dates from the date values
+  const uniqueDates = getUniqueDates(dateValues);
+  
+  // Create table HTML
+  let html = '<table><thead>';
+  
+  // First header row: display headers
+  html += '<tr>';
+  displayHeaders.forEach(h => {
+    html += `<th class="main-header">${formatHeader(h)}</th>`;
+  });
+  
+  // Add each unique date as a separate column header with colspan for morning + evening sessions
+  uniqueDates.forEach(date => {
+    const morningCount = dateSubjectMap[date] ? dateSubjectMap[date].morningCodes.length : 0;
+    const eveningCount = dateSubjectMap[date] ? dateSubjectMap[date].eveningCodes.length : 0;
+    const totalCount = Math.max(1, morningCount + eveningCount);
+    html += `<th class="main-header" colspan="${totalCount}">${date}</th>`;
+  });
+  
+  html += '</tr>';
+  
+  // Second header row: subheaders for morning and evening sessions
+  html += '<tr>';
+  // Empty cells for the regular headers
+  displayHeaders.forEach(() => {
+    html += `<th class="sub-header"></th>`;
+  });
+  
+  // Add session subheaders for each date
+  uniqueDates.forEach(date => {
+    const morningSubjects = dateSubjectMap[date] ? dateSubjectMap[date].morningCodes : [];
+    const eveningSubjects = dateSubjectMap[date] ? dateSubjectMap[date].eveningCodes : [];
+    
+    // Add morning sessions
+    morningSubjects.forEach(subject => {
+      html += `<th class="sub-header">Morning<br>${subject}</th>`;
+    });
+    
+    // Add evening sessions
+    eveningSubjects.forEach(subject => {
+      html += `<th class="sub-header">Evening<br>${subject}</th>`;
+    });
+    
+    // If no sessions, add empty cell
+    if (morningSubjects.length === 0 && eveningSubjects.length === 0) {
+      html += `<th class="sub-header">No Session</th>`;
+    }
+  });
+  
+  html += '</tr>';
+  
+  // Third header row: Blocks requirements for each session
+  html += '<tr>';
+  // Empty cells for the regular headers
+  displayHeaders.forEach(() => {
+    html += `<th class="sub-header"></th>`;
+  });
+  
+  // Extract blocks requirements from headers
+  const sessionRequirements = {};
+  
+  // Add Blocks requirements for each session
+  uniqueDates.forEach(date => {
+    const morningSubjects = dateSubjectMap[date] ? dateSubjectMap[date].morning : [];
+    const eveningSubjects = dateSubjectMap[date] ? dateSubjectMap[date].evening : [];
+    const morningSubjectCodes = dateSubjectMap[date] ? dateSubjectMap[date].morningCodes : [];
+    const eveningSubjectCodes = dateSubjectMap[date] ? dateSubjectMap[date].eveningCodes : [];
+    
+    // Add Morning Blocks requirements
+    morningSubjectCodes.forEach(subjectWithCode => {
+      // Extract just the subject name without the code for comparison
+      let subjectName = subjectWithCode;
+      if (subjectWithCode.includes('(')) {
+        subjectName = subjectWithCode.split(' (')[0];
+      }
+      if (subjectName.includes('[')) {
+        subjectName = subjectName.split(' [')[0];
+      }
+      
+      // Get blocks requirement for this morning session
+      let blocks = 0;
+      if (morningBlocksColumn && morningBlocksValues[morningBlocksColumn]) {
+        const subjectIndex = morningSubjectValues[morningSubjectColumn].indexOf(subjectName);
+        if (subjectIndex !== -1) {
+          blocks = parseInt(morningBlocksValues[morningBlocksColumn][subjectIndex]) || 0;
+        }
+      }
+      
+      // Store requirement for allocation
+      const sessionKey = `${date}-${subjectWithCode}-M`;
+      sessionRequirements[sessionKey] = blocks;
+      
+      html += `<th class="sub-header" style="font-weight: bold;">Blocks: ${blocks}</th>`;
+    });
+    
+    // Add Evening Blocks requirements
+    eveningSubjectCodes.forEach(subjectWithCode => {
+      // Extract just the subject name without the code for comparison
+      let subjectName = subjectWithCode;
+      if (subjectWithCode.includes('(')) {
+        subjectName = subjectWithCode.split(' (')[0];
+      }
+      if (subjectName.includes('[')) {
+        subjectName = subjectName.split(' [')[0];
+      }
+      
+      // Get blocks requirement for this evening session
+      let blocks = 0;
+      if (eveningBlocksColumn && eveningBlocksValues[eveningBlocksColumn]) {
+        const subjectIndex = eveningSubjectValues[eveningSubjectColumn].indexOf(subjectName);
+        if (subjectIndex !== -1) {
+          blocks = parseInt(eveningBlocksValues[eveningBlocksColumn][subjectIndex]) || 0;
+        }
+      }
+      
+      // Store requirement for allocation
+      const sessionKey = `${date}-${subjectWithCode}-E`;
+      sessionRequirements[sessionKey] = blocks;
+      
+      html += `<th class="sub-header" style="font-weight: bold;">Blocks: ${blocks}</th>`;
+    });
+    
+    // If no sessions, add empty cell
+    if (morningSubjectCodes.length === 0 && eveningSubjectCodes.length === 0) {
+      html += `<th class="sub-header"></th>`;
+    }
+  });
+  
+  html += '</tr>';
+  html += '</thead><tbody>';
+
+  // Extract teacher data from displayed table structure
+  const teachers = rows.map((row, index) => {
+    return {
+      id: index,
+      srNo: row[displayHeaders[0]] || (index + 1),
+      name: row[displayHeaders[1]] || '',
+      designation: row[displayHeaders[2]] || '',
+      department: row[displayHeaders[3]] || '',
+      age: row[displayHeaders[4]] || '',
+      rowIndex: index
+    };
+  });
+
+  // Filter teachers (exclude certain designations and age > 58)
+  const eligibleTeachers = teachers.filter(teacher => {
+    const designation = teacher.designation.toLowerCase();
+    const excludedDesignations = ['principal', 'vice principal', 'counselor', 'coordinator'];
+    
+    if (excludedDesignations.some(ex => designation.includes(ex))) {
+      return false;
+    }
+    
+    if (teacher.age && parseInt(teacher.age) > 58) {
+      return false;
+    }
+    
+    return true;
+  });
+
+  // Shuffle teachers if requested
+  let teachersToAllocate = [...eligibleTeachers];
+  if (shuffleTeachers) {
+    teachersToAllocate = shuffleArray([...eligibleTeachers]);
+  }
+
+  // ALLOCATION LOGIC - Implement fair distribution
+  const allocationResults = allocateTeachersFairly(teachersToAllocate, {...sessionRequirements}, uniqueDates, dateSubjectMap);
+  
+  // Add rows with data from both selected table and date values
+  rows.forEach((row, rowIndex) => {
+    html += `<tr>`;
+    
+    // Add the row data in the correct order (Sr No, Teacher Name, Designation, Age, Department)
+    displayHeaders.forEach(h => {
+      if (row.hasOwnProperty(h)) {
+        const cell = row[h] !== null && row[h] !== undefined ? row[h] : '-';
+        html += `<td data-column="${h}" data-original="${escapeHtml(cell)}">${cell}</td>`;
+      } else {
+        html += `<td data-column="${h}" data-original="">-</td>`;
+      }
+    });
+    
+    // Add session allocation cells for this row
+    uniqueDates.forEach(date => {
+      const morningSubjectCodes = dateSubjectMap[date] ? dateSubjectMap[date].morningCodes : [];
+      const eveningSubjectCodes = dateSubjectMap[date] ? dateSubjectMap[date].eveningCodes : [];
+      
+      // Process morning sessions
+      morningSubjectCodes.forEach(subjectWithCode => {
+        const sessionKey = `${date}-${subjectWithCode}-M`;
+        const isAllocated = allocationResults[rowIndex] && allocationResults[rowIndex][sessionKey];
+        
+        html += `<td data-column="${sessionKey}" data-original="${isAllocated ? '1' : '0'}">${
+          isAllocated ? '1' : '0'
+        }</td>`;
+      });
+      
+      // Process evening sessions
+      eveningSubjectCodes.forEach(subjectWithCode => {
+        const sessionKey = `${date}-${subjectWithCode}-E`;
+        const isAllocated = allocationResults[rowIndex] && allocationResults[rowIndex][sessionKey];
+        
+        html += `<td data-column="${sessionKey}" data-original="${isAllocated ? '1' : '0'}">${
+          isAllocated ? '1' : '0'
+        }</td>`;
+      });
+      
+      // If no sessions, add empty cell
+      if (morningSubjectCodes.length === 0 && eveningSubjectCodes.length === 0) {
+        html += `<td data-column="${date}" data-original="">-</td>`;
+      }
+    });
+    
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  tableContainer.innerHTML = html;
+}
+
+// Shuffle array function
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// Reassign allocations with shuffled teachers
+function reassignAllocations() {
+  try {
+    // Get the current processed data from the global scope or recreate it
+    const allotmentData = JSON.parse(sessionStorage.getItem('allotmentData'));
+    
+    if (!allotmentData) {
+      showToast('No allotment data found. Please create an allotment first.', 'error');
+      return;
+    }
+    
+    // Extract the necessary data for redisplay
+    const examTableData = allotmentData.examTable;
+    const selectedTableData = allotmentData.selectedTable;
+    
+    // Find all date columns from exam table
+    const examDateColumns = findDateColumns(examTableData);
+    
+    // Find subject columns
+    const morningSubjectColumn = findMorningSubjectColumn(examTableData);
+    const eveningSubjectColumn = findEveningSubjectColumn(examTableData);
+    const morningSubjectCodeColumn = findMorningSubjectCodeColumn(examTableData);
+    const eveningSubjectCodeColumn = findEveningSubjectCodeColumn(examTableData);
+    const morningBlocksColumn = findMorningBlocksColumn(examTableData);
+    const eveningBlocksColumn = findEveningBlocksColumn(examTableData);
+    
+    // Extract date values
+    const dateValues = extractColumnValues(examTableData, examDateColumns);
+    
+    // Extract subject values
+    const morningSubjectValues = morningSubjectColumn 
+      ? extractColumnValues(examTableData, [morningSubjectColumn])
+      : {};
+    const eveningSubjectValues = eveningSubjectColumn 
+      ? extractColumnValues(examTableData, [eveningSubjectColumn])
+      : {};
+    const morningSubjectCodeValues = morningSubjectCodeColumn 
+      ? extractColumnValues(examTableData, [morningSubjectCodeColumn])
+      : {};
+    const eveningSubjectCodeValues = eveningSubjectCodeColumn 
+      ? extractColumnValues(examTableData, [eveningSubjectCodeColumn])
+      : {};
+    const morningBlocksValues = morningBlocksColumn 
+      ? extractColumnValues(examTableData, [morningBlocksColumn])
+      : {};
+    const eveningBlocksValues = eveningBlocksColumn 
+      ? extractColumnValues(examTableData, [eveningBlocksColumn])
+      : {};
+    
+    // Get date-subject mapping
+    const dateSubjectMap = getDateSubjectMapping(
+      dateValues, 
+      morningSubjectValues, 
+      morningSubjectColumn, 
+      eveningSubjectValues, 
+      eveningSubjectColumn,
+      morningSubjectCodeValues,
+      morningSubjectCodeColumn,
+      eveningSubjectCodeValues,
+      eveningSubjectCodeColumn,
+      morningBlocksValues,
+      morningBlocksColumn,
+      eveningBlocksValues,
+      eveningBlocksColumn
+    );
+    
+    // Redisplay the table with shuffled teachers
+    displaySelectedTable(
+      selectedTableData, 
+      examTableData, 
+      dateValues, 
+      morningSubjectValues, 
+      morningSubjectColumn, 
+      eveningSubjectValues, 
+      eveningSubjectColumn, 
+      morningSubjectCodeValues,
+      morningSubjectCodeColumn,
+      eveningSubjectCodeValues,
+      eveningSubjectCodeColumn,
+      morningBlocksValues,
+      morningBlocksColumn,
+      eveningBlocksValues,
+      eveningBlocksColumn,
+      dateSubjectMap,
+      true // Shuffle teachers
+    );
+    
+    showToast('Teachers reassigned with new random allocation!', 'success');
+    
+  } catch (error) {
+    console.error('Reassignment error:', error);
+    showToast('Error reassigning teachers: ' + error.message, 'error');
+  }
+}
+// NEW: Fair allocation logic function
+function allocateTeachersFairly(teachers, sessionRequirements, uniqueDates, dateSubjectMap) {
+  const allocationResults = {};
+  const teacherSessionCounts = {};
+  
+  // Initialize
+  teachers.forEach(teacher => {
+    allocationResults[teacher.rowIndex] = {};
+    teacherSessionCounts[teacher.rowIndex] = 0;
+  });
+  
+  // Get all session keys that need allocation
+  const sessionKeys = Object.keys(sessionRequirements);
+  
+  // First pass: Allocate HODs with limited sessions (max 4)
+  const hodTeachers = teachers.filter(teacher => 
+    teacher.designation.toLowerCase().includes('hod')
+  );
+  
+  const nonHodTeachers = teachers.filter(teacher => 
+    !teacher.designation.toLowerCase().includes('hod')
+  );
+  
+  // Allocate HODs first with limit
+  hodTeachers.forEach(teacher => {
+    let sessionsAssigned = 0;
+    
+    for (const sessionKey of sessionKeys) {
+      if (sessionsAssigned >= 4) break;
+      
+      const [date, subject, sessionType] = sessionKey.split('-');
+      const requiredBlocks = sessionRequirements[sessionKey];
+      
+      if (requiredBlocks > 0 && !allocationResults[teacher.rowIndex][sessionKey]) {
+        allocationResults[teacher.rowIndex][sessionKey] = true;
+        sessionRequirements[sessionKey]--;
+        teacherSessionCounts[teacher.rowIndex]++;
+        sessionsAssigned++;
+      }
+    }
+  });
+  
+  // Calculate fair distribution for non-HOD teachers
+  const totalRequiredSessions = Object.values(sessionRequirements).reduce((sum, req) => sum + req, 0);
+  const maxSessionsPerTeacher = Math.ceil(totalRequiredSessions / Math.max(nonHodTeachers.length, 1));
+  
+  // Allocate non-HOD teachers with fair distribution
+  nonHodTeachers.forEach(teacher => {
+    let sessionsAssigned = 0;
+    
+    for (const sessionKey of sessionKeys) {
+      if (sessionsAssigned >= maxSessionsPerTeacher) break;
+      
+      const requiredBlocks = sessionRequirements[sessionKey];
+      
+      if (requiredBlocks > 0 && !allocationResults[teacher.rowIndex][sessionKey]) {
+        allocationResults[teacher.rowIndex][sessionKey] = true;
+        sessionRequirements[sessionKey]--;
+        teacherSessionCounts[teacher.rowIndex]++;
+        sessionsAssigned++;
+      }
+    }
+  });
+  
+  return allocationResults;
+}
+// Display the exam data table
+function displayExamTable(examTable) {
+  const tableContainer = document.getElementById('examTableContainer');
+  const headers = examTable.headers;
+  const rows = examTable.rows;
+  
+  if (!rows || rows.length === 0) {
+    tableContainer.innerHTML = '<div class="loading"><i class="fas fa-database"></i><span>No exam data found.</span></div>';
+    return;
+  }
+
+  // Create table HTML
+  let html = '<table><thead><tr>';
+  headers.forEach(h => {
+    html += `<th class="main-header">${formatHeader(h)}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  // Add rows
+  rows.forEach(row => {
+    html += `<tr>`;
+    
+    headers.forEach(h => {
+      const cell = row[h] !== null && row[h] !== undefined ? row[h] : '-';
+      html += `<td data-column="${h}" data-original="${escapeHtml(cell)}">${cell}</td>`;
+    });
+    
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  tableContainer.innerHTML = html;
+}
+
+// Search functionality
+function setupSearch() {
+  const searchInput = document.getElementById('tableSearch');
+  const clearBtn = document.getElementById('clearSearch');
+  
+  if (searchInput && clearBtn) {
+    // Initialize with clear button hidden
+    clearBtn.classList.remove('visible');
+    
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.trim();
+      
+      // Toggle clear button visibility
+      if (searchTerm.length > 0) {
+        clearBtn.classList.add('visible');
+      } else {
+        clearBtn.classList.remove('visible');
+      }
+      
+      if (searchTerm) {
+        highlightSearchResults(searchTerm.toLowerCase());
+      } else {
+        clearSearchHighlights();
+      }
+    });
+    
+    clearBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      searchInput.value = '';
+      searchInput.focus();
+      this.classList.remove('visible');
+      clearSearchHighlights();
+    });
+  }
+}
+
+function highlightSearchResults(searchTerm) {
+  let hasResults = false;
+  let firstMatch = null;
+  
+  // Search in both tables
+  const tables = [
+    document.getElementById('selectedTableContainer'),
+    document.getElementById('examTableContainer')
+  ];
+  
+  tables.forEach(tableContainer => {
+    const rows = tableContainer.querySelectorAll('tbody tr');
+    
+    rows.forEach(row => {
+      let rowMatch = false;
+      const cells = row.querySelectorAll('td');
+      
+      cells.forEach(cell => {
+        const cellText = cell.textContent.toLowerCase();
+        const originalContent = cell.getAttribute('data-original') || cell.textContent;
+        
+        if (cellText.includes(searchTerm)) {
+          rowMatch = true;
+          const highlightedContent = originalContent.replace(
+            new RegExp(searchTerm, 'gi'),
+            match => '<span class="search-highlight">' + match + '</span>'
+          );
+          cell.innerHTML = highlightedContent;
+        } else {
+          cell.innerHTML = originalContent;
+        }
+      });
+      
+      if (rowMatch) {
+        hasResults = true;
+        row.style.display = '';
+        // Store the first matching row for scrolling
+        if (!firstMatch) {
+          firstMatch = row;
+        }
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+  
+  // Create or get no results element
+  let noResults = document.querySelector('.no-results');
+  if (!noResults) {
+    noResults = document.createElement('div');
+    noResults.className = 'no-results';
+    noResults.textContent = 'No matching results found';
+    document.querySelector('.container').appendChild(noResults);
+  }
+  
+  // Show/hide no results message
+  noResults.style.display = hasResults ? 'none' : 'block';
+  
+  // Scroll to the first matching row if found
+  if (firstMatch) {
+    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function clearSearchHighlights() {
+  // Clear in both tables
+  const tables = [
+    document.getElementById('selectedTableContainer'),
+    document.getElementById('examTableContainer')
+  ];
+  
+  const noResults = document.querySelector('.no-results');
+  
+  if (noResults) {
+    noResults.style.display = 'none';
+  }
+  
+  tables.forEach(tableContainer => {
+    const rows = tableContainer.querySelectorAll('tbody tr');
+    
+    rows.forEach(row => {
+      row.style.display = '';
+      const cells = row.querySelectorAll('td');
+      
+      cells.forEach(cell => {
+        const originalContent = cell.getAttribute('data-original') || cell.textContent;
+        cell.innerHTML = originalContent;
+      });
+    });
+  });
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  applyTheme();
+  loadAllotmentData();
+  
+  // Set up dark mode toggle
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  if (darkModeToggle) {
+    darkModeToggle.addEventListener('change', function() {
+      if (this.checked) {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+  }
+});
+// ADD THESE FUNCTIONS TO YOUR SCRIPT
+
+// Download as Excel function
+function downloadAllocationExcel() {
+  try {
+    // Get current date for filename
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    
+    // Get exam info for filename
+    let examName = 'Exam_Allocation';
+    try {
+      const examInfoDiv = document.getElementById('allotmentInfo');
+      if (examInfoDiv) {
+        const examNameElem = examInfoDiv.querySelector('.exam-info-value');
+        if (examNameElem) {
+          examName = examNameElem.textContent.trim().replace(/[^a-zA-Z0-9]/g, '_');
+        }
+      }
+    } catch (e) {
+      console.log('Could not extract exam name:', e);
+    }
+    
+    // Create HTML table content for Excel
+    const table = document.querySelector('#selectedTableContainer table');
+    if (!table) {
+      throw new Error('Allocation table not found');
+    }
+    
+    // Create a temporary HTML file with table data
+    const htmlContent = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+            xmlns:x="urn:schemas-microsoft-com:office:excel" 
+            xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          table { border-collapse: collapse; width: 100%; }
+          th { background-color: #4361ee; color: white; font-weight: bold; }
+          td, th { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          tr:nth-child(even) { background-color: #f2f2f2; }
+        </style>
+      </head>
+      <body>
+        ${table.outerHTML}
+      </body>
+      </html>
+    `;
+    
+    // Create Blob and download
+    const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create download link
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${examName}_Allocation_${dateStr}.xls`);
+    
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Show success message
+    showToast('Excel download started successfully!', 'success');
+    
+  } catch (error) {
+    console.error('Excel download error:', error);
+    showToast('Error downloading Excel: ' + error.message, 'error');
+  }
+}
+
+// Save table and redirect function
+function saveAndRedirect() {
+  try {
+    // Get the table data
+    const table = document.querySelector('#selectedTableContainer table');
+    if (!table) {
+      throw new Error('No table data found');
+    }
+    
+    // Store the table HTML in sessionStorage
+    sessionStorage.setItem('allocationTableData', table.outerHTML);
+    
+    // Store basic info about the allocation
+    const allocationInfo = {
+      savedAt: new Date().toISOString(),
+      teacherCount: document.querySelectorAll('#selectedTableContainer tbody tr').length,
+      examName: document.querySelector('#allotmentInfo .exam-info-value')?.textContent || 'Unknown Exam'
+    };
+    sessionStorage.setItem('allocationInfo', JSON.stringify(allocationInfo));
+    
+    // Redirect to view page
+    window.location.href = 'viewalloted.html';
+    
+  } catch (error) {
+    console.error('Save error:', error);
+    showToast('Error saving table: ' + error.message, 'error');
+  }
+}
+
+// Add this CSS for the buttons
+const buttonStyles = `
+  .action-buttons-container {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    font-size: 14px;
+  }
+
+  .action-button.primary {
+    background: var(--primary);
+    color: white;
+  }
+
+  .action-button.primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .action-button.secondary {
+    background: var(--success);
+    color: white;
+  }
+
+  .action-button.secondary:hover {
+    background: #00a8d4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+// Add styles to document
+const styleEl = document.createElement('style');
+styleEl.textContent = buttonStyles;
+document.head.appendChild(styleEl);
+// Save table to database in structured format
+// Save table to database using exam file name as table name
+async function saveTableToDatabase() {
+  try {
+    showToast('Saving allocation data to database...', 'info');
+    
+    // Get the displayed table
+    const table = document.querySelector('#selectedTableContainer table');
+    if (!table) {
+      throw new Error('No allocation table found');
+    }
+    
+    // Get exam file name from sessionStorage or from the displayed info
+    let examFileName = sessionStorage.getItem('lastExamFileName');
+    
+    // If not in session, try to get from the displayed exam info
+    if (!examFileName) {
+      const examInfoItems = document.querySelectorAll('.exam-info-item');
+      for (const item of examInfoItems) {
+        const label = item.querySelector('.exam-info-label');
+        if (label && label.textContent.includes('Exam File')) {
+          const valueElem = item.querySelector('.exam-info-value');
+          if (valueElem) {
+            examFileName = valueElem.textContent.trim();
+            break;
+          }
+        }
+      }
+    }
+    
+    // If still not found, use a default name with timestamp
+    if (!examFileName) {
+      const now = new Date();
+      examFileName = `allotment_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+    }
+    
+    // Clean the table name for database use (remove special characters)
+    const tableName = examFileName.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
+    
+    // Extract ALL headers from the displayed table (including multi-level headers)
+    const headerRows = table.querySelectorAll('thead tr');
+    const headers = [];
+    
+    // Process each header row
+    for (let i = 0; i < headerRows.length; i++) {
+      const headerCells = headerRows[i].querySelectorAll('th');
+      const rowHeaders = [];
+      
+      headerCells.forEach(cell => {
+        // Get colspan to handle merged headers
+        const colspan = parseInt(cell.getAttribute('colspan')) || 1;
+        const text = cell.textContent.trim();
+        
+        // For cells with colspan, we need to duplicate them
+        for (let j = 0; j < colspan; j++) {
+          rowHeaders.push(text);
+        }
+      });
+      
+      headers.push(rowHeaders);
+    }
+    
+    // Extract all data rows exactly as displayed
+    const rows = [];
+    const dataRows = table.querySelectorAll('tbody tr');
+    
+    dataRows.forEach(row => {
+      const rowData = [];
+      const cells = row.querySelectorAll('td');
+      
+      cells.forEach(cell => {
+        // Get the cell content exactly as displayed
+        const cellContent = cell.textContent.trim();
+        rowData.push(cellContent);
+      });
+      
+      rows.push(rowData);
+    });
+    
+    // Prepare the complete table structure for storage
+    const tableData = {
+      tableName: tableName,
+      originalName: examFileName,
+      headers: headers, // All header levels
+      rows: rows,       // All data exactly as displayed
+      savedAt: new Date().toISOString(),
+      totalRows: rows.length,
+      totalColumns: headers[0] ? headers[0].length : 0
+    };
+    
+    // Save using the Electron API method (or your preferred method)
+    const saveResult = await window.electronAPI.saveAllotmentTable(tableData);
+    
+    if (saveResult && saveResult.success) {
+      showToast('Allotment data saved to database successfully!', 'success');
+      
+      // Store the table name for the view page
+      sessionStorage.setItem('lastSavedTable', tableName);
+      sessionStorage.setItem('savedAt', new Date().toISOString());
+      sessionStorage.setItem('originalExamName', examFileName);
+      
+      // Redirect to view page after a short delay
+      setTimeout(() => {
+        window.location.href = 'viewalloted.html';
+      }, 1500);
+    } else {
+      throw new Error(saveResult.error || 'Failed to save table to database');
+    }
+    
+  } catch (error) {
+    console.error('Save error:', error);
+    showToast('Error saving table: ' + error.message, 'error');
+  }
+}
+</script>
+</body>
+</html>

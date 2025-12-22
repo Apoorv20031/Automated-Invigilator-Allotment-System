@@ -1,0 +1,60 @@
+{
+  "name": "college-examination-system",
+  "version": "1.0.0",
+  "description": "College Examination Management System",
+  "author": "Apoorv Ghanekar <apoorvghanekar@email.com> - All Rights Reserved 2025",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build-win": "electron-builder --win",
+    "build-mac": "electron-builder --mac",
+    "build-linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.apoorv.college-examination",
+    "productName": "College Examination System",
+    "copyright": "Copyright © 2025 Apoorv Ghanekar. All Rights Reserved.",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/electron/{dist,src}",
+      "!**/*.{ts,map,log}",
+      "!{.nyc_output,coverage,.vscode,docs,__tests__,tests,test,example,examples}"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "College Examination System",
+      "uninstallDisplayName": "College Examination System",
+      "deleteAppDataOnUninstall": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^30.5.1",
+    "electron-builder": "^26.0.12"
+  },
+  "dependencies": {
+    "csv-parser": "^3.2.0",
+    "csv-stringify": "^6.6.0",
+    "debug": "^4.4.1",
+    "sqlite3": "^5.1.7"
+  }
+}

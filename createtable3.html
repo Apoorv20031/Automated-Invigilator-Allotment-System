@@ -1,0 +1,1397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Table Viewer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+       /* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for the entire page */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 6px;
+  border: 3px solid var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-color);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--bg-color);
+}
+
+/* Smooth scrolling for all containers with overflow */
+.container, .exam-info-container, .table-container {
+  scroll-behavior: smooth;
+}
+
+/* Header shadow on scroll */
+header {
+  transition: box-shadow 0.3s ease;
+}
+
+header.scrolled {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+    /* Your existing CSS styles remain unchanged */
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --accent: #4895ef;
+      --light: #f8f9fa;
+      --dark: #1a1a2e;
+      --gray: #6c757d;
+      --success: #4cc9f0;
+      --danger: #f72585;
+      --warning: #f8961e;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --bg-color: #f5f7fb;
+      --text-color: #1a1a2e;
+      --header-bg: linear-gradient(135deg, var(--primary), var(--accent));
+      --card-bg: white;
+      --sidebar-bg: white;
+      --footer-bg: white;
+      --container-bg: white;
+      --table-header-bg: var(--primary);
+      --table-row-even: #f9f9f9;
+      --table-row-hover: #f1f1f1;
+      --highlight-color: #fffacd;
+    }
+
+    .dark-mode {
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
+      --header-bg: linear-gradient(135deg, #1a1a2e, #16213e);
+      --card-bg: #1e1e1e;
+      --sidebar-bg: #1e1e1e;
+      --footer-bg: #1e1e1e;
+      --container-bg: #1e1e1e;
+      --table-header-bg: #2a2a2a;
+      --table-row-even: #252525;
+      --table-row-hover: #2e2e2e;
+      --highlight-color: #3a3a00;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      padding: 20px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    header {
+      background: var(--header-bg);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .header-title i {
+      font-size: 1.2rem;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .toggle-icon {
+      font-size: 1rem;
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .exam-info-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .exam-info-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 200px;
+      flex: 1 1 200px;
+    }
+
+    .exam-info-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .exam-info-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .exam-info-label {
+      font-size: 13px;
+      color: var(--gray);
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .exam-info-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .file-info-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 200px;
+      flex: 1 1 200px;
+    }
+
+    .file-info-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: #f72585;
+    }
+
+    .file-info-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-info-label {
+      font-size: 13px;
+      color: var(--gray);
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .file-info-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-color);
+      word-break: break-all;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(0,0,0,0.1);
+      margin: 20px 0;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #tableContainer {
+      margin: 30px 0;
+      overflow-x: auto;
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
+      max-height: calc(100vh - 250px);
+      position: relative;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      table-layout: auto;
+    }
+
+    th {
+      background: var(--table-header-bg);
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    tr:nth-child(even) {
+      background: var(--table-row-even);
+    }
+
+    tr:hover {
+      background: var(--table-row-hover);
+    }
+
+    .highlight {
+      background: var(--highlight-color) !important;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-top: 20px;
+      transition: var(--transition);
+    }
+
+    .back-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 30px;
+      color: var(--gray);
+    }
+
+    .loading i {
+      animation: spin 1s linear infinite;
+    }
+
+    th.checkbox-column, td.checkbox-column {
+      width: 40px;
+      text-align: center;
+    }
+    
+    .proceed-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      margin: 15px 0;
+      display: none;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      border-radius: 8px;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: white;
+  background-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.toast-success {
+  background-color: #4BB543;
+}
+
+.toast-error {
+  background-color: var(--danger);
+}
+
+.toast-warning {
+  background-color: var(--warning);
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+    @media (max-width: 768px) {
+      .exam-info-container {
+        gap: 15px;
+        padding: 15px;
+      }
+      
+      .exam-info-item {
+        min-width: 160px;
+        flex: 1 1 160px;
+      }
+      
+      th, td {
+        padding: 10px 12px;
+      }
+    }
+    .action-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.action-btn {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.edit-btn {
+  background-color: var(--warning);
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #e07e00;
+}
+
+.save-btn {
+  background-color: var(--success);
+  color: white;
+  display: none;
+}
+
+.save-btn:hover {
+  background-color: #00a8d4;
+}
+
+.delete-btn {
+  background-color: var(--danger);
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #e01171;
+}
+
+.editable {
+  background-color: var(--highlight-color);
+  outline: 1px solid var(--warning);
+}
+
+.editable-input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  color: var(--dark);
+}
+    @media (max-width: 480px) {
+      .exam-info-container {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .exam-info-item {
+        width: 100%;
+      }
+      
+      header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .header-title {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .theme-toggle {
+        margin-top: 0.5rem;
+      }
+      
+      .proceed-container {
+        justify-content: center;
+      }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+   .search-container {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.search-box {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+}
+
+.search-box i {
+  position: absolute;
+  left: 12px;
+  color: var(--gray);
+  z-index: 1;
+}
+
+.search-box input {
+  width: 100%;
+    padding: 10px 40px 10px 40px; /* Extra right padding for clear button */
+
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 14px;
+  transition: var(--transition);
+  box-shadow: var(--card-shadow);
+}
+.clear-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--gray);
+  cursor: pointer;
+  padding: 5px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.8);
+  z-index: 2;
+}
+
+.clear-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.clear-btn:hover {
+  background-color: rgba(0,0,0,0.1);
+  color: var(--danger);
+}
+
+
+.clear-btn i {
+  font-size: 12px;
+  transition: var(--transition);
+}
+
+.search-highlight {
+  background-color: var(--highlight-color);
+  font-weight: 600;
+  padding: 2px;
+  border-radius: 3px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px;
+  color: var(--danger);
+  font-weight: 500;
+  display: none;
+}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-title">
+      <h1 id="tableTitle">Table Viewer</h1>
+    </div>
+   
+    <div class="theme-toggle" id="themeToggle">
+      <i class="fas fa-moon toggle-icon"></i>
+      <label class="toggle-switch">
+        <input type="checkbox" id="darkModeToggle">
+        <span class="slider"></span>
+      </label>
+      <i class="fas fa-sun toggle-icon"></i>
+    </div>
+  </header>
+  <div class="search-container">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="tableSearch" placeholder="Search in table...">
+      <button id="clearSearch" class="clear-btn" title="Clear search">
+        <i class="fas fa-times"></i> 
+      </button>
+    </div>
+  </div>
+  <div class="container">
+    <div id="examInfo"></div>
+
+    <div id="tableContainer">
+      <div class="loading">
+        <i class="fas fa-spinner"></i>
+        <span>Loading table data...</span>
+      </div>
+    </div>
+    
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <div class="proceed-container" id="proceedContainer" style="display: none;">
+      <button class="btn btn-primary" id="proceedBtn">
+        <i class="fas fa-arrow-right"></i> Proceed with Selected Rows
+      </button>
+    </div>
+
+    <a href="createtable2.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Upload
+    </a>
+  </div>
+
+<script>
+    // Function to get URL parameters
+    function getUrlParams() {
+      const params = {};
+      const queryString = window.location.search.substring(1);
+      const pairs = queryString.split('&');
+      
+      for (let i = 0; i < pairs.length; i++) {
+        const pair = pairs[i].split('=');
+        if (pair[0] && pair[1]) {
+          params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+        }
+      }
+      return params;
+    }
+
+    // Extract and display the file names
+    document.addEventListener('DOMContentLoaded', function() {
+      const params = getUrlParams();
+      
+      // Display exam file name in header
+      if (params.files) {
+        try {
+          const fileNames = JSON.parse(params.files);
+          
+          // Store exam file name in session storage
+          if (fileNames && fileNames.length > 0) {
+            sessionStorage.setItem('examfile', fileNames[0]);
+            
+            // Display exam file in header
+            const headerInfo = document.createElement('div');
+            headerInfo.className = 'header-info';
+            headerInfo.innerHTML = `
+              <div class="header-info-item">
+                <i class="fas fa-file-alt"></i>
+                <span>${fileNames[0]}</span>
+              </div>
+            `;
+            
+            // Add to header title section
+            const headerTitle = document.querySelector('.header-title');
+            headerTitle.appendChild(headerInfo);
+          }
+        } catch (e) {
+          console.error('Error parsing file names:', e);
+        }
+      }
+    });
+
+    // Database configuration
+    const DB_NAME = 'LargeDataStorage';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'selections';
+    let db;
+    let tableData = []; // Store table data globally
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      applyTheme();
+      loadTableData();
+      
+      // Set up dark mode toggle
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      if (darkModeToggle) {
+        darkModeToggle.addEventListener('change', function() {
+          if (this.checked) {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('theme', 'light');
+          }
+        });
+      }
+    });
+
+    // Apply theme based on user preference
+    function applyTheme() {
+      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      let currentTheme = localStorage.getItem('theme');
+      
+      // Use system preference if no theme is set
+      if (!currentTheme) {
+        currentTheme = prefersDarkScheme.matches ? 'dark' : 'light';
+        localStorage.setItem('theme', currentTheme);
+      }
+      
+      // Apply the stored theme
+      if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeToggle').checked = true;
+      }
+    }
+
+    // Load table data
+    async function loadTableData() {
+      try {
+        // Get table name from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const tableName = urlParams.get('table');
+        
+        if (!tableName) {
+          throw new Error('No table specified in URL');
+        }
+        
+        // Store the table name in sessionStorage
+        sessionStorage.setItem('selectedTable', tableName);
+        
+        // Validate table exists first
+        const tableExists = await window.electronAPI.getViewTables()
+          .then(tables => tables.includes(tableName));
+        
+        if (!tableExists) {
+          throw new Error(`Table "${tableName}" does not exist`);
+        }
+        
+        // Set title
+        document.getElementById('tableTitle').textContent = `📊 ${tableName.replace(/_/g, ' ')}`;
+        document.title = `📊 ${tableName.replace(/_/g, ' ')} | Table Viewer`;
+
+        // Show loading state
+        const tableContainer = document.getElementById('tableContainer');
+        tableContainer.innerHTML = `
+          <div class="loading">
+            <i class="fas fa-spinner"></i>
+            <span>Loading table data...</span>
+          </div>
+        `;
+
+        // Show progress bar
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        progressContainer.style.display = 'block';
+        
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += 5;
+          progressBar.style.width = `${Math.min(progress, 90)}%`;
+          if (progress >= 90) clearInterval(progressInterval);
+        }, 200);
+
+        // Fetch table data
+        tableData = await window.electronAPI.getViewTableData(tableName);
+        if (!tableData || tableData.length === 0) {
+          tableContainer.innerHTML = '<div class="loading"><i class="fas fa-database"></i><span>No data found in this table.</span></div>';
+          progressContainer.style.display = 'none';
+          return;
+        }
+
+        // Complete progress bar
+        progressBar.style.width = '100%';
+        setTimeout(() => progressContainer.style.display = 'none', 500);
+
+        // Get headers from first row
+        const headers = Object.keys(tableData[0]);
+        
+        // Create table HTML with checkbox column
+        let html = '<table><thead><tr>';
+        html += '<th class="checkbox-column"><input type="checkbox" id="selectAll"></th>';
+        headers.forEach(h => {
+          html += `<th>${formatHeader(h)}</th>`;
+        });
+        html += '<th>Action</th>';
+        html += '</tr></thead><tbody>';
+
+        // Add rows with checkboxes and action buttons
+        tableData.forEach((row, index) => {
+          const rowId = row.id || index;
+          html += '<tr>';
+          html += `<td class="checkbox-column"><input type="checkbox" class="row-checkbox" data-row-id="${index}"></td>`;
+          
+          headers.forEach(h => {
+            const cell = row[h] !== null && row[h] !== undefined ? row[h] : '-';
+            html += `<td data-column="${h}" data-original="${escapeHtml(cell)}">${cell}</td>`;
+          });
+          
+          // Add action buttons
+          html += `
+            <td class="action-buttons">
+              <button class="action-btn edit-btn" data-row-id="${rowId}">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <button class="action-btn save-btn" data-row-id="${rowId}" style="display: none;">
+                <i class="fas fa-save"></i> Save
+              
+            </td>
+          `;
+          
+          html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        tableContainer.innerHTML = html;
+        setupActionButtons(tableName);
+        
+        // Show proceed button
+        document.getElementById('proceedContainer').style.display = 'flex';
+        
+        // Set up checkbox event listeners
+        setupCheckboxes();
+        
+        // Set up search functionality
+        setupSearch();
+        
+      } catch (err) {
+        console.error(err);
+        document.getElementById('tableContainer').innerHTML = `
+          <div class="loading" style="color: var(--danger)">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Error loading table data: ${err.message}</span>
+          </div>`;
+        document.getElementById('progressContainer').style.display = 'none';
+      }
+    }
+
+    // Set up checkbox functionality
+    function setupCheckboxes() {
+      // Select all checkbox functionality
+      const selectAll = document.getElementById('selectAll');
+      const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+      
+      selectAll.addEventListener('change', function() {
+        rowCheckboxes.forEach(checkbox => {
+          checkbox.checked = this.checked;
+        });
+      });
+      
+      // Individual checkbox functionality
+      rowCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          if (!this.checked) {
+            selectAll.checked = false;
+          } else {
+            const allChecked = [...rowCheckboxes].every(cb => cb.checked);
+            selectAll.checked = allChecked;
+          }
+        });
+      });
+      
+      // Proceed button functionality
+      document.getElementById('proceedBtn').addEventListener('click', async function() {
+        const btn = this;
+        const originalText = btn.innerHTML;
+        
+        try {
+          // Show loading state on button
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
+          
+          const selectedRows = [];
+          document.querySelectorAll('.row-checkbox:checked').forEach(checkbox => {
+            const rowId = parseInt(checkbox.getAttribute('data-row-id'));
+            selectedRows.push(tableData[rowId]);
+          });
+          
+          if (selectedRows.length === 0) {
+            throw new Error('Please select at least one row to proceed');
+          }
+          
+          // Show progress bar
+          const progressContainer = document.getElementById('progressContainer');
+          const progressBar = document.getElementById('progressBar');
+          progressContainer.style.display = 'block';
+          progressBar.style.width = '0%';
+          
+          // Get table name
+          const tableName = sessionStorage.getItem('selectedTable');
+          
+          // Get exam file name from session storage
+          const examFile = sessionStorage.getItem('examfile') || '';
+          
+          // Get headers from first row
+          const headers = Object.keys(tableData[0]);
+          
+          // Create selection data with all necessary information
+          const selectionData = {
+            table: tableName,
+            examfile: examFile, // Include exam file name
+            headers: headers,
+            rows: selectedRows,
+            timestamp: new Date().toISOString(),
+            totalRows: tableData.length,
+            selectedCount: selectedRows.length
+          };
+          
+          // Try to store in sessionStorage
+          try {
+            sessionStorage.setItem('selectedRows', JSON.stringify(selectionData));
+            progressBar.style.width = '100%';
+            
+            // Navigate to next page with exam file parameter
+            setTimeout(() => {
+              window.location.href = `process.html?table=${encodeURIComponent(tableName)}&examfile=${encodeURIComponent(examFile)}`;
+            }, 500);
+            
+          } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+              // If data is too large for sessionStorage, use IndexedDB
+              console.log('Data too large for sessionStorage, using IndexedDB');
+              const storageKey = `selectedRows_${tableName}_${Date.now()}`;
+              
+              // Store with progress updates
+              await storeWithProgress(storageKey, selectionData);
+              
+              // Store reference in sessionStorage
+              sessionStorage.setItem('currentSelectionKey', storageKey);
+              
+              // Complete progress
+              progressBar.style.width = '100%';
+              
+              // Navigate to next page with all parameters
+              setTimeout(() => {
+                window.location.href = `process.html?table=${encodeURIComponent(tableName)}&examfile=${encodeURIComponent(examFile)}&key=${storageKey}`;
+              }, 500);
+            } else {
+              throw e;
+            }
+          }
+          
+        } catch (error) {
+          console.error('Proceed error:', error);
+          showToast(error.message, 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+          document.getElementById('progressContainer').style.display = 'none';
+        }
+      });
+    }
+    
+    // Store data with progress updates
+    function storeWithProgress(key, data) {
+      return new Promise((resolve, reject) => {
+        const progressBar = document.getElementById('progressBar');
+        const chunks = chunkData(data, 1024 * 1024); // 1MB chunks
+        
+        const transaction = db.transaction(STORE_NAME, 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        
+        // First store the chunk info
+        const chunkInfo = {
+          totalChunks: chunks.length,
+          chunkSize: 1024 * 1024,
+          originalSize: JSON.stringify(data).length
+        };
+        
+        const infoRequest = store.put(chunkInfo, `${key}_info`);
+        
+        infoRequest.onsuccess = () => {
+          let processed = 0;
+          
+          // Store each chunk
+          chunks.forEach((chunk, index) => {
+            const chunkRequest = store.put(chunk, `${key}_${index}`);
+            
+            chunkRequest.onsuccess = () => {
+              processed++;
+              const progress = Math.round((processed / chunks.length) * 100);
+              progressBar.style.width = `${progress}%`;
+              
+              if (processed === chunks.length) {
+                resolve();
+              }
+            };
+            
+            chunkRequest.onerror = (event) => {
+              reject(event.target.error);
+            };
+          });
+        };
+        
+        infoRequest.onerror = (event) => {
+          reject(event.target.error);
+        };
+      });
+    }
+    
+    // Helper to chunk large data
+    function chunkData(data, chunkSize) {
+      const json = JSON.stringify(data);
+      const chunks = [];
+      
+      for (let i = 0; i < json.length; i += chunkSize) {
+        chunks.push(json.slice(i, i + chunkSize));
+      }
+      
+      return chunks;
+    }
+
+    // Format table headers
+    function formatHeader(header) {
+      return header.replace(/[_]+/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).trim();
+    }
+    
+    // Helper function to escape HTML
+    function escapeHtml(unsafe) {
+      return unsafe
+        .toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Function to set up edit/save/delete button handlers
+    function setupActionButtons(tableName) {
+      // Edit button functionality
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const rowId = this.getAttribute('data-row-id');
+          const row = this.closest('tr');
+          
+          // Hide edit button, show save button
+          this.style.display = 'none';
+          row.querySelector('.save-btn').style.display = 'flex';
+          
+          // Make all cells editable except checkbox and action cells
+          const cells = row.querySelectorAll('td:not(.checkbox-column):not(.action-buttons)');
+          cells.forEach(cell => {
+            const originalValue = cell.getAttribute('data-original');
+            cell.classList.add('editable');
+            cell.innerHTML = `<input type="text" class="editable-input" value="${escapeHtml(originalValue)}">`;
+          });
+        });
+      });
+      
+      // Save button functionality
+      document.querySelectorAll('.save-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          const rowId = this.getAttribute('data-row-id');
+          const tableName = sessionStorage.getItem('selectedTable');
+          const row = this.closest('tr');
+          
+          if (!tableName) {
+            showToast('No table selected - please reload the page', 'error');
+            return;
+          }
+
+          // Show loading state
+          const originalText = this.innerHTML;
+          this.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving...`;
+          this.disabled = true;
+
+          try {
+            // Collect updated data
+            const updatedData = {};
+            const cells = row.querySelectorAll('td:not(.checkbox-column):not(.action-buttons)');
+            
+            cells.forEach(cell => {
+              const columnName = cell.getAttribute('data-column');
+              const input = cell.querySelector('.editable-input');
+              const newValue = input ? input.value : cell.textContent;
+              updatedData[columnName] = newValue;
+            });
+
+            // Get primary key column name
+            const tableInfo = await window.electronAPI.getViewTableInfo(tableName);
+            const pkColumn = tableInfo.primaryKey;
+
+            // Call IPC to update row
+            const result = await window.electronAPI.updateUploadRow({
+              tableName,
+              pkColumn,
+              rowId,
+              updatedData
+            });
+
+            if (!result.success) {
+              throw new Error(result.error || 'Update failed');
+            }
+
+            // Update UI on success
+            cells.forEach(cell => {
+              const columnName = cell.getAttribute('data-column');
+              const newValue = updatedData[columnName];
+              cell.classList.remove('editable');
+              cell.innerHTML = newValue;
+              cell.setAttribute('data-original', newValue);
+            });
+
+            // Toggle buttons
+            this.style.display = 'none';
+            row.querySelector('.edit-btn').style.display = 'flex';
+            
+            showToast('Row updated successfully!', 'success');
+          } catch (err) {
+            console.error('Update error:', err);
+            
+            // Revert UI changes
+            const cells = row.querySelectorAll('td:not(.checkbox-column):not(.action-buttons)');
+            cells.forEach(cell => {
+              const originalValue = cell.getAttribute('data-original');
+              cell.classList.remove('editable');
+              cell.innerHTML = originalValue;
+            });
+
+            showToast(err.message.includes('no such table') 
+              ? `Table "${tableName}" not found` 
+              : err.message, 
+            'error');
+          } finally {
+            // Restore button
+            this.innerHTML = originalText;
+            this.disabled = false;
+          }
+        });
+      });
+      
+      // Delete button functionality
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          const rowId = this.getAttribute('data-row-id');
+          const tableName = sessionStorage.getItem('selectedTable');
+          
+          if (confirm('Are you sure you want to delete this row?')) {
+            // Show loading state on button
+            const originalText = this.innerHTML;
+            this.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Deleting...`;
+            this.disabled = true;
+
+            try {
+              // Call IPC to delete row from database
+              const result = await window.electronAPI.deleteUploadRow({
+                tableName,
+                rowId
+              });
+              
+              if (result.success) {
+                showToast(result.message || 'Row deleted successfully!', 'success');
+                // Remove row from DOM
+                this.closest('tr').remove();
+              } else {
+                throw new Error(result.error || 'Delete failed');
+              }
+            } catch (err) {
+              console.error('Delete error:', err);
+              showToast(err.message || 'Error deleting row', 'error');
+            } finally {
+              // Restore button state if still exists (row might have been removed)
+              if (document.body.contains(this)) {
+                this.innerHTML = originalText;
+                this.disabled = false;
+              }
+            }
+          }
+        });
+      });
+    }
+
+    // Toast notification function
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 500);
+      }, 3000);
+    }
+
+    // Search functionality
+    function setupSearch() {
+      const searchInput = document.getElementById('tableSearch');
+      const clearBtn = document.getElementById('clearSearch');
+      
+      if (searchInput && clearBtn) {
+        // Initialize with clear button hidden
+        clearBtn.classList.remove('visible');
+        
+        searchInput.addEventListener('input', function() {
+          const searchTerm = this.value.trim();
+          
+          // Toggle clear button visibility
+          if (searchTerm.length > 0) {
+            clearBtn.classList.add('visible');
+          } else {
+            clearBtn.classList.remove('visible');
+          }
+          
+          if (searchTerm) {
+            highlightSearchResults(searchTerm.toLowerCase());
+          } else {
+            clearSearchHighlights();
+          }
+        });
+        
+        clearBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          searchInput.value = '';
+          searchInput.focus();
+          this.classList.remove('visible');
+          clearSearchHighlights();
+        });
+      }
+    }
+
+    function highlightSearchResults(searchTerm) {
+      let hasResults = false;
+      let firstMatch = null;
+      const rows = document.querySelectorAll('#tableContainer tbody tr');
+      
+      // Create or get no results element
+      let noResults = document.querySelector('.no-results');
+      if (!noResults) {
+        noResults = document.createElement('div');
+        noResults.className = 'no-results';
+        noResults.textContent = 'No matching results found';
+        document.getElementById('tableContainer').appendChild(noResults);
+      }
+      
+      rows.forEach(row => {
+        let rowMatch = false;
+        const cells = row.querySelectorAll('td:not(.checkbox-column):not(.action-buttons)');
+        
+        cells.forEach(cell => {
+          const cellText = cell.textContent.toLowerCase();
+          const originalContent = cell.getAttribute('data-original') || cell.textContent;
+          
+          if (cellText.includes(searchTerm)) {
+            rowMatch = true;
+            const highlightedContent = originalContent.replace(
+              new RegExp(searchTerm, 'gi'),
+              match => `<span class="search-highlight">${match}</span>`
+            );
+            cell.innerHTML = highlightedContent;
+          } else {
+            cell.innerHTML = originalContent;
+          }
+        });
+        
+        if (rowMatch) {
+          hasResults = true;
+          row.style.display = '';
+          // Store the first matching row for scrolling
+          if (!firstMatch) {
+            firstMatch = row;
+          }
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      
+      // Show/hide no results message
+      noResults.style.display = hasResults ? 'none' : 'block';
+      
+      // Scroll to the first matching row if found
+      if (firstMatch) {
+        firstMatch.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function clearSearchHighlights() {
+      const rows = document.querySelectorAll('#tableContainer tbody tr');
+      const noResults = document.querySelector('.no-results');
+      
+      if (noResults) {
+        noResults.style.display = 'none';
+      }
+      
+      rows.forEach(row => {
+        row.style.display = '';
+        const cells = row.querySelectorAll('td:not(.checkbox-column):not(.action-buttons)');
+        
+        cells.forEach(cell => {
+          const originalContent = cell.getAttribute('data-original') || cell.textContent;
+          cell.innerHTML = originalContent;
+        });
+      });
+    }
+  </script>
+</body>
+</html>
