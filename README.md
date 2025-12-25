@@ -20,13 +20,15 @@ Works offline
 Cross-platform desktop application
 
 🧰 Technologies Used
-Technology	Purpose
-HTML, CSS, JavaScript	Frontend
-Electron.js	Desktop Framework
-Node.js	Backend Runtime
-SQLite3	Local Database
-PapaParse	CSV Parsing
-Git	Version Control
+| Technology            | Purpose           |
+| --------------------- | ----------------- |
+| HTML, CSS, JavaScript | Frontend          |
+| Electron.js           | Desktop Framework |
+| Node.js               | Backend Runtime   |
+| SQLite3               | Local Database    |
+| PapaParse             | CSV Parsing       |
+| Git                   | Version Control   |
+
 🖼️ Screenshots
 
 UI images are not included in this repository.
