@@ -38,6 +38,7 @@ Dashboard Screenshot
 📤 Upload Teacher & Exam CSV
 Upload CSV Screen
 ![image alt](https://github.com/Apoorv20031/Automated-Invigilator-Allotment-System/blob/8fa1a518bc4a067a78aa17ebace690647164fb4c/upload%20data%20page.png)
+
 Upload Exam CSV Screen
 ![image alt](https://github.com/Apoorv20031/Automated-Invigilator-Allotment-System/blob/8fa1a518bc4a067a78aa17ebace690647164fb4c/upload%20exam%20.png)
 
@@ -51,6 +52,7 @@ Allotment Table View
 ![image alt](https://github.com/Apoorv20031/Automated-Invigilator-Allotment-System/blob/8fa1a518bc4a067a78aa17ebace690647164fb4c/view.png)
 
 📌 Installation & Setup
+
 1️⃣ Clone the Repository
 git clone https://github.com/your-username/Automated-Invigilator-Allotment-System.git
 
@@ -65,7 +67,3 @@ npm start
 
 📜 License
 This project is intended for academic and learning purposes only.
-
-Add folder structure
-
-Make ultra-short version (10 lines)
