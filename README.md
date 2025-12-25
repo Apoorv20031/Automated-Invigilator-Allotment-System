@@ -30,11 +30,8 @@ Cross-platform desktop application
 | Git                   | Version Control   |
 
 🖼️ Screenshots
-
-UI images are not included in this repository.
-
 📊 Dashboard
-
+![image alt](https://github.com/Apoorv20031/Automated-Invigilator-Allotment-System/blob/8fa1a518bc4a067a78aa17ebace690647164fb4c/home%20page.png)
 Dashboard Screenshot
 
 📤 Upload Teacher & Exam CSV
