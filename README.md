@@ -36,18 +36,19 @@ Cross-platform desktop application
 Dashboard Screenshot
 
 📤 Upload Teacher & Exam CSV
-
 Upload CSV Screen
+![image alt](https://github.com/Apoorv20031/Automated-Invigilator-Allotment-System/blob/8fa1a518bc4a067a78aa17ebace690647164fb4c/upload%20data%20page.png)
+Upload Exam CSV Screen
+![image alt](https://github.com/Apoorv20031/Automated-Invigilator-Allotment-System/blob/8fa1a518bc4a067a78aa17ebace690647164fb4c/upload%20exam%20.png)
+
+📋 Process Allotment Table
+![image alt](https://github.com/Apoorv20031/Automated-Invigilator-Allotment-System/blob/8fa1a518bc4a067a78aa17ebace690647164fb4c/process.png)
 
 📋 Generated Allotment Table
+![image alt](https://github.com/Apoorv20031/Automated-Invigilator-Allotment-System/blob/8fa1a518bc4a067a78aa17ebace690647164fb4c/alloted%20.png)
 
 Allotment Table View
-
-✏️ Edit / Reassign Duties
-
-Edit / Reassign Screen
-
-📸 Any images used during development were taken from Google and are used only for academic and educational purposes.
+![image alt](https://github.com/Apoorv20031/Automated-Invigilator-Allotment-System/blob/8fa1a518bc4a067a78aa17ebace690647164fb4c/view.png)
 
 📌 Installation & Setup
 1️⃣ Clone the Repository
